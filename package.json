@@ -1,0 +1,55 @@
+{
+  "name": "@wangminghua/koa-restful",
+  "version": "0.1.1",
+  "description": "基于 Koa2 快速 restful api 框架 （typescript）",
+  "main": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "scripts": {
+    "build": "rimraf -rf ./dist && npx tsc",
+    "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
+    "run-simple": "node ./dist-example/simple.js"
+  },
+  "files": [
+    "src",
+    "src-example",
+    "dist",
+    "dist-example",
+    "package.json",
+    "tsconfig.json",
+    "tsconfig.example.json",
+    "README.md"
+  ],
+  "author": "wangminghua",
+  "license": "ISC",
+  "peerDependencies": {
+    "@koa/bodyparser": "^5.0.0",
+    "@koa/router": "^12.0.1",
+    "koa": "^2.14.2",
+    "koa-compose": "^4.1.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@koa/bodyparser": "^5.0.0",
+    "@koa/router": "^12.0.1",
+    "koa": "^2.14.2",
+    "koa-compose": "^4.1.0",
+    "lodash-es": "^4.17.21",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.13.11",
+    "@types/koa__router": "^12.0.4",
+    "@types/koa-compose": "^3.2.8",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^5.0.5",
+    "@wangminghua/koa-restful": "file:./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WangMingHua111/koa-restful.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
