@@ -1,6 +1,6 @@
 {
   "name": "@wangminghua/koa-restful",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "基于 Koa2 快速 restful api 框架 （typescript）",
   "main": "./dist/index.js",
   "types": "./dist/types/index.d.ts",

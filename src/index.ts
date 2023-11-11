@@ -15,6 +15,7 @@ import {
 
 export * from "./di";
 export * from "./restful";
+export * from "./services";
 
 type KoaRestfulOptions = {
   /**
