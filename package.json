@@ -7,6 +7,7 @@
   "scripts": {
     "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
     "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
+    "build-readme": "npx tsc -p tsconfig.example.json",
     "run-simple": "node ./dist-example/simple.js",
     "run-simple-injection": "node ./dist-example/simple-injection.js",
     "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
@@ -37,15 +38,16 @@
     "koa": "^2.14.2",
     "koa-compose": "^4.1.0",
     "lodash-es": "^4.17.21",
+    "reflect-metadata": "^0.1.13",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@types/koa": "^2.13.11",
-    "@types/koa-compose": "^3.2.8",
     "@types/koa__router": "^12.0.4",
+    "@types/koa-compose": "^3.2.8",
     "@wangminghua/koa-restful": "file:./",
     "axios": "^1.5.0",
-    "reflect-metadata": "^0.1.13",
+    "markdown-include": "^0.4.3",
     "rimraf": "^5.0.5"
   },
   "repository": {

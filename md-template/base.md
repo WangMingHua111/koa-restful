@@ -26,7 +26,7 @@ Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使�
 
 <p align="center">
   <a href="https://github.com/wangminghua111/koa-restful/">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://github.com/shaojintian/Best_README_template/raw/master/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">"完美的"README模板</h3>
