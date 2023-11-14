@@ -89,7 +89,7 @@ export function FromQuery(
 }
 
 /**
- * 从请求头参数中读取
+ * 从请求头参数中读取，示例：test?id=1
  * @param name 参数名
  * @param converter
  * @returns
@@ -141,7 +141,7 @@ export function FromHeader(
 }
 
 /**
- * 从路径参数中读取
+ * 从路径参数中读取，示例：test/:id
  * @returns
  */
 export function FromRoute(

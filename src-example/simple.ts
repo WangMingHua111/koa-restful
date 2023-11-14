@@ -1,10 +1,15 @@
-// @ts-nocheck
 import {
   BaseController,
   Controller,
+  FromQuery,
+  FromRoute,
+  HttpDelete,
   HttpGet,
+  HttpPost,
+  HttpPut,
   KoaRestful,
 } from "@wangminghua/koa-restful";
+import axios, { type AxiosResponse } from "axios";
 import Koa from "koa";
 
 // 创建一个控制器
@@ -14,15 +19,20 @@ class TestController extends BaseController {
    * 创建一个 get 请求
    */
   @HttpGet()
-  GetNumber() {
+  @HttpPost()
+  @HttpDelete()
+  @HttpPut()
+  GetTest() {
     this.http.ok(`获取到：${1}`);
   }
-  /**
-   * 创建一个 get 请求
-   */
-  @HttpGet("GetNumberRename")
-  GetNumber2() {
-    this.http.ok(`获取到：${2}`);
+
+  // 创建一个请求，并读取url查询参数，和路径查询参数
+  @HttpGet("GetTestParameter/:id")
+  GetTestParameter(
+    @FromRoute("id") id: string,
+    @FromQuery("name") name: string
+  ) {
+    this.http.ok(`路径参数ID = ${id} 查询参数NAME = ${name}`);
   }
 }
 
@@ -36,9 +46,15 @@ console.log("http://localhost:3000");
 // 3秒后启动测试脚本
 setTimeout(() => {
   const baseurl = `http://localhost:3000`;
-  const output = async (req: Response) => {
-    console.log(`请求地址：${req.url}`, await req.text());
+  const output = async (req: AxiosResponse) => {
+    console.log(`${req.config.method} 请求地址：${req.config.url}`, req.data);
   };
-  fetch(`${baseurl}/Test/GetNumber`).then(output);
-  fetch(`${baseurl}/Test/GetNumberRename`).then(output);
+  axios.get(`${baseurl}/Test/GetTest`).then(output);
+  axios.post(`${baseurl}/Test/GetTest`).then(output);
+  axios.put(`${baseurl}/Test/GetTest`).then(output);
+  axios.delete(`${baseurl}/Test/GetTest`).then(output);
+
+  axios
+    .get(`${baseurl}/Test/GetTestParameter/123`, { params: { name: "hyi" } })
+    .then(output);
 }, 3000);

@@ -5,9 +5,12 @@
   "main": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
   "scripts": {
-    "build": "rimraf -rf ./dist && npx tsc",
+    "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
     "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
-    "run-simple": "node ./dist-example/simple.js"
+    "run-simple": "node ./dist-example/simple.js",
+    "run-simple-injection": "node ./dist-example/simple-injection.js",
+    "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
+    "run-simple-static-injection": "node ./dist-example/simple-static-injection.js"
   },
   "files": [
     "src",
@@ -38,11 +41,12 @@
   },
   "devDependencies": {
     "@types/koa": "^2.13.11",
-    "@types/koa__router": "^12.0.4",
     "@types/koa-compose": "^3.2.8",
+    "@types/koa__router": "^12.0.4",
+    "@wangminghua/koa-restful": "file:./",
+    "axios": "^1.5.0",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^5.0.5",
-    "@wangminghua/koa-restful": "file:./"
+    "rimraf": "^5.0.5"
   },
   "repository": {
     "type": "git",
@@ -51,5 +55,8 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
