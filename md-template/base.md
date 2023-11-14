@@ -44,3 +44,39 @@ Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使�
   </p>
 
 </p>
+
+## 上手指南
+
+### 依赖
+
+```sh
+npm install koa @wangminghua/koa-restful
+```
+
+### 开发前的配置要求
+
+1. Node 版本要求 >= 16.0.0
+2. 项目源码必须使用 typescript 编写，并设置 `tsconfig.json` 的 `compilerOptions.experimentalDecorators` 和 `compilerOptions.emitDecoratorMetadata` 为 `true`
+
+### 工程创建
+
+#### 创建工程目录
+
+```sh
+# 你的工程名称
+mkdir simple-api
+# 进入项目目录
+cd simple-api
+# npm 初始化，执行npm初始化流程
+npm init
+# 安装 koa 和 koa-restful
+npm install koa @wangminghua/koa-restful
+# 执行typescript配置文件初始化
+npx tsc --init
+```
+
+#### 执行
+
+> 请参照该仓库，也可以按需求自主集成
+
+> [src-example/simple.ts](src-example/simple.ts)
