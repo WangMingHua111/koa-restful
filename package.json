@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
     "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
-    "build-readme": "npx tsc -p tsconfig.example.json",
+    "build-readme": "node ./script/build-readme.js",
     "run-simple": "node ./dist-example/simple.js",
     "run-simple-injection": "node ./dist-example/simple-injection.js",
     "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
