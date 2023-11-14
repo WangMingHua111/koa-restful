@@ -16,7 +16,7 @@ import Koa from "koa";
 @Controller()
 class TestController extends BaseController {
   /**
-   * 创建一个 get 请求
+   * 创建一个 get/post/delete/put 请求
    */
   @HttpGet()
   @HttpPost()
