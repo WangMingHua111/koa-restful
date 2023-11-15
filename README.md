@@ -71,7 +71,6 @@ cd simple-api
 npm init
 # 安装 koa 和 koa-restful
 npm install koa @wangminghua/koa-restful
-npm install @types/koa --save-dev
 # 执行typescript配置文件初始化
 npx tsc --init
 ```
