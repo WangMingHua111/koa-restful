@@ -84,3 +84,7 @@ npx tsc --init
 #### 在线测试
 
 [![koa-restful-demo 在线测试](https://github.com/wangminghua111/koa-restful/raw/master/images/codesandbox.io.gif)](https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13)
+
+#### 微信交流群
+
+![微信交流群](https://oss.wangminghua.com/koa-restful/Join.jpg)
