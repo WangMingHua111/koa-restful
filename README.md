@@ -26,17 +26,17 @@ Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使�
 
 <p align="center">
   <a href="https://github.com/wangminghua111/koa-restful/">
-    <img src="https://github.com/shaojintian/Best_README_template/raw/master/images/logo.png" alt="Logo" width="80" height="80">
+    <img src="https://github.com/wangminghua111/koa-restful/raw/master/images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">"完美的"README模板</h3>
+  <h3 align="center">"超简单"的 Restful Api</h3>
   <p align="center">
-    一个"完美的"README模板去快速开始你的项目！
+    一个"超简单"的Restful快速开始你的项目！
     <br />
     <a href="https://github.com/wangminghua111/koa-restful"><strong>探索本项目的文档 »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/wangminghua111/koa-restful">查看Demo</a>
+    <a href="https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13">查看Demo</a>
     ·
     <a href="https://github.com/wangminghua111/koa-restful/issues">报告Bug</a>
     ·
@@ -80,6 +80,10 @@ npx tsc --init
 > 请参照该仓库，也可以按需求自主集成
 
 > [src-example/simple.ts](src-example/simple.ts)
+
+#### 在线测试
+
+[![koa-restful-demo 在线测试](https://github.com/wangminghua111/koa-restful/raw/master/images/codesandbox.io.gif)](https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13)
 
 
 ## 示例代码
