@@ -55,8 +55,28 @@ npm install koa @wangminghua/koa-restful
 
 ### 开发前的配置要求
 
-1. Node 版本要求 >= 16.0.0
+1. Node 版本要求 >= 16
 2. 项目源码必须使用 typescript 编写，并设置 `tsconfig.json` 的 `compilerOptions.experimentalDecorators` 和 `compilerOptions.emitDecoratorMetadata` 为 `true`
+
+### 运行仓库 demo
+
+```sh
+# 克隆源码仓库
+git clone https://github.com/WangMingHua111/koa-restful.git
+
+# 进入工作目录
+cd koa-restful
+
+# npm插入依赖
+npm install
+
+# 构建dist、dist-example、README.md
+npm run build-all
+
+# 运行示例
+npm run run-simple
+
+```
 
 ### 工程创建
 
@@ -83,7 +103,9 @@ npx tsc --init
 
 #### 在线测试
 
-[![koa-restful-demo 在线测试](https://github.com/wangminghua111/koa-restful/raw/master/images/codesandbox.io.gif)](https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13)
+传送门 [koa-restful-demo 在线测试](https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13)
+
+![传送门](https://github.com/wangminghua111/koa-restful/raw/master/images/codesandbox.io.gif)
 
 #### 微信交流群
 
