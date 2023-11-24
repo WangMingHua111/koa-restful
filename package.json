@@ -1,58 +1,58 @@
 {
-  "name": "@wangminghua/koa-restful",
-  "version": "0.1.4",
-  "description": "Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使用 TypeScript 构建。它旨在提供一种轻量、高效、易用的方式来构建 RESTful 风格的后端服务。",
-  "main": "./dist/index.js",
-  "types": "./dist/types/index.d.ts",
-  "scripts": {
-    "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
-    "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
-    "build-readme": "node ./script/build-readme.js",
-    "build-all": "npm run build && npm run build-example && npm run build-readme",
-    "run-simple": "node ./dist-example/simple.js",
-    "run-simple-injection": "node ./dist-example/simple-injection.js",
-    "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
-    "run-simple-static-injection": "node ./dist-example/simple-static-injection.js",
-    "run-simple-resolve": "node ./dist-example/simple-resolve.js"
-  },
-  "files": [
-    "src",
-    "src-example",
-    "dist",
-    "dist-example",
-    "package.json",
-    "tsconfig.json",
-    "tsconfig.example.json",
-    "README.md"
-  ],
-  "author": "wangminghua",
-  "license": "ISC",
-  "dependencies": {
-    "@types/koa": "^2.13.11",
-    "@koa/bodyparser": "^5.0.0",
-    "@koa/router": "^12.0.1",
-    "koa": "^2.14.2",
-    "koa-compose": "^4.1.0",
-    "lodash-es": "^4.17.21",
-    "reflect-metadata": "^0.1.13",
-    "typescript": "^5.2.2"
-  },
-  "devDependencies": {
-    "@types/koa__router": "^12.0.4",
-    "@types/koa-compose": "^3.2.8",
-    "@wangminghua/koa-restful": "file:./",
-    "axios": "^1.5.0",
-    "rimraf": "^5.0.5"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/WangMingHua111/koa-restful.git"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "engines": {
-    "node": ">=16"
-  }
+    "name": "@wangminghua/koa-restful",
+    "version": "0.1.4",
+    "description": "Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使用 TypeScript 构建。它旨在提供一种轻量、高效、易用的方式来构建 RESTful 风格的后端服务。",
+    "main": "./dist/index.js",
+    "types": "./dist/types/index.d.ts",
+    "scripts": {
+        "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
+        "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
+        "build-readme": "node ./script/build-readme.js",
+        "build-all": "npm run build && npm run build-example && npm run build-readme",
+        "run-simple": "node ./dist-example/simple.js",
+        "run-simple-injection": "node ./dist-example/simple-injection.js",
+        "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
+        "run-simple-static-injection": "node ./dist-example/simple-static-injection.js",
+        "run-simple-resolve": "node ./dist-example/simple-resolve.js"
+    },
+    "files": [
+        "src",
+        "src-example",
+        "dist",
+        "dist-example",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.example.json",
+        "README.md"
+    ],
+    "author": "wangminghua",
+    "license": "ISC",
+    "dependencies": {
+        "@types/koa": "^2.13.11",
+        "@koa/bodyparser": "^5.0.0",
+        "@koa/router": "^12.0.1",
+        "koa": "^2.14.2",
+        "koa-compose": "^4.1.0",
+        "lodash-es": "^4.17.21",
+        "reflect-metadata": "^0.1.13",
+        "typescript": "^5.2.2"
+    },
+    "devDependencies": {
+        "@types/koa__router": "^12.0.4",
+        "@types/koa-compose": "^3.2.8",
+        "@wangminghua/koa-restful": "file:./",
+        "axios": "^1.5.0",
+        "rimraf": "^5.0.5"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/WangMingHua111/koa-restful.git"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "engines": {
+        "node": ">=16"
+    }
 }

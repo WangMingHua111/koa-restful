@@ -1,11 +1,11 @@
 {
-  "extends": "./tsconfig.json",
-  "include": ["./src-example/**.ts"],
-  "compilerOptions": {
-    "outDir": "./dist-example" /* Specify an output folder for all emitted files. */,
-    "declaration": false,
-    "declarationMap": false,
-    "sourceMap": false,
-    "declarationDir": null
-  }
+    "extends": "./tsconfig.json",
+    "include": ["./src-example/**.ts"],
+    "compilerOptions": {
+        "outDir": "./dist-example" /* Specify an output folder for all emitted files. */,
+        "declaration": false,
+        "declarationMap": false,
+        "sourceMap": false,
+        "declarationDir": null
+    }
 }
