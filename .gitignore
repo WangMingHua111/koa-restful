@@ -3,3 +3,4 @@
 /dist
 /dist-example
 
+/docs/.vitepress/dist
