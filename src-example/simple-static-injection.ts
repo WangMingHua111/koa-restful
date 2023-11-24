@@ -29,6 +29,7 @@ class DataSet3 extends BaseDataSet {
 AddDependency(new DataSet(), { alias: [BaseDataSet] });
 AddDependency(new DataSet3(), { uniqueId: "data-set" });
 
+// let ds4: BaseDataSet;
 // 创建一个控制器
 @Controller()
 class TestController extends BaseController {

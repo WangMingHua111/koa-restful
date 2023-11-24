@@ -80,6 +80,29 @@ export function AddDependency(
   alias.forEach((func) => container.set(func, service));
 }
 
+/**
+ * 解析依赖
+ * @param cls 类型
+ * @param opts
+ * @returns InstanceType<Class> | undefined
+ */
+export function ResolveDependency<Class extends new (...args: any) => any>(
+  cls: Class
+): InstanceType<Class> | undefined {
+  if (container.has(cls)) return container.get(cls)?.instance();
+}
+
+/**
+ * 解析依赖（从唯一ID）
+ * @param uniqueId 注入依赖的唯一ID
+ * @returns InstanceType<Class> | undefined
+ */
+export function ResolveDependencyFromUniqueId<
+  Class extends new (...args: any) => any
+>(uniqueId: string): InstanceType<Class> | undefined {
+  return container.get(uniqueId)?.instance();
+}
+
 export function Injection(opts?: {
   /**
    * 注入依赖的唯一ID
