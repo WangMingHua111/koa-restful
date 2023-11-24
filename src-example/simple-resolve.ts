@@ -1,4 +1,4 @@
-import { Dependency } from '@wangminghua/koa-restful'
+import { Dependency, ResolveDependency, ResolveDependencyFromUniqueId } from '@wangminghua/koa-restful'
 // ResolveDependency, ResolveDependencyFromUniqueId
 
 // 基础类
@@ -10,28 +10,7 @@ class BaseClass {
 
 // 子类
 @Dependency({ alias: [BaseClass], uniqueId: 't-class' })
-class TestClass extends BaseClass {
-    log2() {}
-}
-
-/**
- * 解析依赖
- * @param cls 类型
- * @param opts
- * @returns InstanceType<Class> | undefined
- */
-export function ResolveDependency<Class extends abstract new (...args: any) => any>(cls: Class): InstanceType<Class> | undefined {
-    return undefined
-}
-
-/**
- * 解析依赖（从唯一ID）
- * @param uniqueId 注入依赖的唯一ID
- * @returns InstanceType<Class> | undefined
- */
-export function ResolveDependencyFromUniqueId<Class extends new (...args: any) => any>(uniqueId: string): InstanceType<Class> | undefined {
-    return undefined
-}
+class TestClass extends BaseClass {}
 
 const ds = ResolveDependency(BaseClass)
 const ds2 = ResolveDependency(TestClass)
