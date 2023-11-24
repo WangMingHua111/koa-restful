@@ -13,7 +13,9 @@
         "run-simple-injection": "node ./dist-example/simple-injection.js",
         "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
         "run-simple-static-injection": "node ./dist-example/simple-static-injection.js",
-        "run-simple-resolve": "node ./dist-example/simple-resolve.js"
+        "run-simple-resolve": "node ./dist-example/simple-resolve.js",
+        "docs:build": "vitepress build docs",
+        "docs:serve": "vitepress serve docs"
     },
     "files": [
         "src",
@@ -28,9 +30,9 @@
     "author": "wangminghua",
     "license": "ISC",
     "dependencies": {
-        "@types/koa": "^2.13.11",
         "@koa/bodyparser": "^5.0.0",
         "@koa/router": "^12.0.1",
+        "@types/koa": "^2.13.11",
         "koa": "^2.14.2",
         "koa-compose": "^4.1.0",
         "lodash-es": "^4.17.21",
@@ -42,7 +44,8 @@
         "@types/koa-compose": "^3.2.8",
         "@wangminghua/koa-restful": "file:./",
         "axios": "^1.5.0",
-        "rimraf": "^5.0.5"
+        "rimraf": "^5.0.5",
+        "vitepress": "^1.0.0-rc.30"
     },
     "repository": {
         "type": "git",
