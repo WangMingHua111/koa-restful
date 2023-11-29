@@ -107,10 +107,6 @@ npx tsc --init
 
 ![传送门](https://github.com/wangminghua111/koa-restful/raw/master/images/codesandbox.io.gif)
 
-#### 微信交流群
-
-![微信交流群](https://oss.wangminghua.com/koa-restful/Join.jpg)
-
 ## 示例代码
 
 ### src-example\simple-alias-injection.ts
