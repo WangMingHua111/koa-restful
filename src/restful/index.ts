@@ -1,4 +1,5 @@
-import { IScopeService, KEY_CONTROLLER, Lifecycle, SingletonScopeService, TransientScopeService } from '../shared'
+import { IScopeService, Lifecycle, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
+import { KEY_CONTROLLER } from '../utils/shared'
 export * from './from-type'
 export * from './request-method'
 

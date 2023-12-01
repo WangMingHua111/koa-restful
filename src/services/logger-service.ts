@@ -45,15 +45,8 @@ interface ILoggerService {
  */
 abstract class LoggerService implements ILoggerService {
     async assert(value: boolean | Promise<boolean>, message: string, logType: LogType = 'info'): Promise<void> {
-        let condition = false
-        if (value instanceof Promise) {
-            condition = await value
-        } else {
-            condition = value
-        }
-        if (condition) {
-            await this.log(message, logType)
-        }
+        let condition = value instanceof Promise ? await value : value
+        if (condition) await this.log(message, logType)
     }
     abstract log(message: string, logType?: LogType | undefined): Promise<void>
 

@@ -1,4 +1,4 @@
-import { ParameterConverter } from '../shared'
+import { ParameterConverter } from '../utils/shared'
 
 /**
  * 字符串参数转换器，这是默认转换器

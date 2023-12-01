@@ -1,6 +1,6 @@
 import { bodyParser } from '@koa/bodyparser'
 import { Context, Next } from 'koa'
-import { KEY_PARAMETER, ParameterConverter, ParameterConverterFn, ParameterConverterType, TParam, parsePropertyKey } from '../shared'
+import { KEY_PARAMETER, ParameterConverter, ParameterConverterFn, ParameterConverterType, TParam, parseParameterName, parsePropertyKey } from '../utils/shared'
 import { BooleanArrayParameterConverter, BooleanParameterConverter, NumberArrayParameterConverter, NumberParameterConverter, StringArrayParameterConverter, StringParameterConverter } from './parameter-converter'
 
 function readParams(params: any, p: TParam) {
@@ -25,8 +25,9 @@ export type BodyParserOptions = Omit<Exclude<Parameters<typeof bodyParser>[0], u
  * @param converter
  * @returns
  */
-export function FromQuery(name: TParam, converter: ParameterConverterType = 'str'): ParameterDecorator {
+export function FromQuery(name?: TParam, converter: ParameterConverterType = 'str'): ParameterDecorator {
     return function (target: Object, propertyKey: string | symbol | undefined, parameterIndex: number) {
+        const parameterName = parseParameterName(target as any, propertyKey, parameterIndex)
         const metakey = `${KEY_PARAMETER}:${parsePropertyKey(propertyKey)}`
         const metadata: Record<number, ParameterConverterFn> = Reflect.getMetadata(metakey, target.constructor) || {}
 
@@ -55,7 +56,7 @@ export function FromQuery(name: TParam, converter: ParameterConverterType = 'str
                     conv = converter
                     break
             }
-            return conv.cast(readParams(ctx.query, name))
+            return conv.cast(readParams(ctx.query, name || parameterName))
         }
         Reflect.defineMetadata(metakey, metadata, target.constructor)
     }
@@ -68,8 +69,9 @@ export function FromQuery(name: TParam, converter: ParameterConverterType = 'str
  * @returns
  */
 
-export function FromHeader(name: TParam, converter: ParameterConverterType = 'str'): ParameterDecorator {
+export function FromHeader(name?: TParam, converter: ParameterConverterType = 'str'): ParameterDecorator {
     return function (target: Object, propertyKey: string | symbol | undefined, parameterIndex: number) {
+        const parameterName = parseParameterName(target as any, propertyKey, parameterIndex)
         const metakey = `${KEY_PARAMETER}:${parsePropertyKey(propertyKey)}`
         const metadata: Record<number, ParameterConverterFn> = Reflect.getMetadata(metakey, target.constructor) || {}
 
@@ -98,7 +100,7 @@ export function FromHeader(name: TParam, converter: ParameterConverterType = 'st
                     conv = converter
                     break
             }
-            const tname = typeof name === 'string' ? name : name.name
+            const tname = typeof name === 'string' ? name : name?.name || parameterName
             return conv.cast(ctx.get(tname))
         }
         Reflect.defineMetadata(metakey, metadata, target.constructor)
@@ -109,8 +111,9 @@ export function FromHeader(name: TParam, converter: ParameterConverterType = 'st
  * 从路径参数中读取，示例：test/:id
  * @returns
  */
-export function FromRoute(name: TParam, converter: Extract<ParameterConverterType, 'str' | 'num'> = 'str'): ParameterDecorator {
+export function FromRoute(name?: TParam, converter: Extract<ParameterConverterType, 'str' | 'num'> = 'str'): ParameterDecorator {
     return function (target: Object, propertyKey: string | symbol | undefined, parameterIndex: number) {
+        const parameterName = parseParameterName(target as any, propertyKey, parameterIndex)
         const metakey = `${KEY_PARAMETER}:${parsePropertyKey(propertyKey)}`
         const metadata: Record<number, ParameterConverterFn> = Reflect.getMetadata(metakey, target.constructor) || {}
 
@@ -125,7 +128,7 @@ export function FromRoute(name: TParam, converter: Extract<ParameterConverterTyp
                     conv = new StringParameterConverter()
                     break
             }
-            return conv.cast(readParams(ctx.params, name))
+            return conv.cast(readParams(ctx.params, name || parameterName))
         }
         Reflect.defineMetadata(metakey, metadata, target.constructor)
     }
@@ -139,6 +142,7 @@ export function FromRoute(name: TParam, converter: Extract<ParameterConverterTyp
  */
 export function FromBody(options?: BodyParserOptions): ParameterDecorator {
     return function (target: Object, propertyKey: string | symbol | undefined, parameterIndex: number) {
+        // const parameterName = parseParameterName(target as any, propertyKey, parameterIndex)
         const metakey = `${KEY_PARAMETER}:${parsePropertyKey(propertyKey)}`
         const metadata: Record<number, ParameterConverterFn> = Reflect.getMetadata(metakey, target.constructor) || {}
         metadata[parameterIndex] = async (ctx: Context, next: Next) => {
