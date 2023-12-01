@@ -109,210 +109,108 @@ npx tsc --init
 
 ## 示例代码
 
-### src-example\simple-alias-injection.ts
+### src-example\simple.ts 常用示例
 
 ```typescript
-//src-example\simple-alias-injection.ts
-import { BaseController, Controller, Dependency, HttpGet, Injection, KoaRestful } from '@wangminghua/koa-restful'
-import axios, { type AxiosResponse } from 'axios'
-import Koa from 'koa'
-// 声明一个抽象类或者基类
-abstract class BaseDataSet {
-    abstract data(): string
-}
-// 声明一个依赖，并设置依赖别名类型为抽象类 BaseDataSet
-@Dependency({ alias: [BaseDataSet] })
-class DataSet extends BaseDataSet {
-    data() {
-        return `${new Date().toISOString()}`
-    }
-}
-// 声明一个依赖，并设置依赖唯一Id
-@Dependency({ uniqueId: 'data-set' })
-class DataSet3 extends BaseDataSet {
-    data() {
-        return `${new Date().toISOString()}`
-    }
-}
+// src-example/simple.ts
+import { Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpPatch, HttpPost, HttpPut, KoaRestful } from '@wangminghua/koa-restful'
+import Koa, { Context } from 'koa'
 
-// 创建一个控制器
+// 测试类型
+type TestModel = { name: string; value: string }
+
+// 创建 GET 请求控制器（仅支持类）
 @Controller()
-class TestController extends BaseController {
-    // 注入一个依赖
-    @Injection()
-    ds!: DataSet
-    // 注入一个依赖
-    @Injection()
-    ds2!: BaseDataSet
-    // 注入一个依赖
-    @Injection({ uniqueId: 'data-set' })
-    ds3!: BaseDataSet
-    /**
-     * 创建一个 get 请求
-     */
+class GetController {
+    // 返回一个字符串
     @HttpGet()
-    GetNumber() {
-        this.http.ok(`ds获取到：${this.ds.data()} ds2获取到：${this.ds2.data()} ds3获取到：${this.ds3.data()}`)
+    test1(): string {
+        return `GetController test1 = ${new Date().toLocaleTimeString()}`
     }
-}
 
-const app = new Koa()
-app.use(KoaRestful({ logs: true })) // 使用 KoaRestful 插件
-app.listen(3000) // 创建 http://localhost:3000
-
-console.log('启动成功，3秒后执行 restful api 请求。')
-console.log('http://localhost:3000')
-
-// 3秒后启动测试脚本
-setTimeout(() => {
-    const baseurl = `http://localhost:3000`
-    const output = async (req: AxiosResponse) => {
-        console.log(`请求地址：${req.config.url}`, req.data)
-    }
-    axios(`${baseurl}/Test/GetNumber`).then(output)
-}, 3000)
-```
-
-### src-example\simple-injection.ts
-
-```typescript
-//src-example\simple-injection.ts
-import { BaseController, Controller, Dependency, HttpGet, Injection, KoaRestful } from '@wangminghua/koa-restful'
-import axios, { type AxiosResponse } from 'axios'
-import Koa from 'koa'
-
-// 声明一个依赖
-@Dependency()
-class DataSet {
-    data() {
-        return `${new Date().toISOString()}`
-    }
-}
-
-// 创建一个控制器
-@Controller()
-class TestController extends BaseController {
-    // 注入一个依赖
-    @Injection()
-    ds!: DataSet
-    /**
-     * 创建一个 get 请求
-     */
+    // 获取查询参数
     @HttpGet()
-    GetNumber() {
-        this.http.ok(`获取到：${this.ds.data()}`)
+    test2(@FromQuery() name: string): string {
+        return `GetController test2 = ${new Date().toLocaleTimeString()} name = ${name}`
     }
-}
 
-const app = new Koa()
-app.use(KoaRestful({ logs: true })) // 使用 KoaRestful 插件
-app.listen(3000) // 创建 http://localhost:3000
-
-console.log('启动成功，3秒后执行 restful api 请求。')
-console.log('http://localhost:3000')
-
-// 3秒后启动测试脚本
-setTimeout(() => {
-    const baseurl = `http://localhost:3000`
-    const output = async (req: AxiosResponse) => {
-        console.log(`请求地址：${req.config.url}`, req.data)
+    // 获取路径参数
+    @HttpGet('test3/:id')
+    test3(@FromRoute() id: string): string {
+        return `GetController test3 = ${new Date().toLocaleTimeString()} id = ${id}`
     }
-    axios(`${baseurl}/Test/GetNumber`).then(output)
-}, 3000)
-```
 
-### src-example\simple-static-injection.ts
-
-```typescript
-//src-example\simple-static-injection.ts
-import { AddDependency, BaseController, Controller, HttpGet, Injection, KoaRestful } from '@wangminghua/koa-restful'
-import axios, { type AxiosResponse } from 'axios'
-import Koa from 'koa'
-
-// 声明一个抽象类或者基类
-abstract class BaseDataSet {
-    abstract data(): string
-}
-
-class DataSet extends BaseDataSet {
-    data() {
-        return `${new Date().toISOString()}`
+    // 读取路径参数和查询参数
+    @HttpGet('test4/:id')
+    test4(@FromRoute() id: string, @FromQuery() name: string): string {
+        return `GetController test4 = ${new Date().toLocaleTimeString()} id = ${id} name = ${name}`
     }
-}
 
-class DataSet3 extends BaseDataSet {
-    data() {
-        return `${new Date().toISOString()}`
+    // 第一个参数默认为Koa Context
+    @HttpGet('test5/:id')
+    test5(ctx: Context, @FromRoute() id: string, @FromQuery() name: string): string {
+        return `GetController test5 = ${new Date().toLocaleTimeString()} id = ${id} name = ${name} ip = ${ctx.request.ip}`
     }
-}
-// 静态创建一个依赖，并设置依赖别名类型为抽象类 BaseDataSet
-AddDependency(new DataSet(), { alias: [BaseDataSet] })
-AddDependency(new DataSet3(), { uniqueId: 'data-set' })
 
-// 创建一个控制器
-@Controller()
-class TestController extends BaseController {
-    // 注入一个依赖
-    @Injection()
-    ds!: DataSet
-    // 注入一个依赖
-    @Injection()
-    ds2!: BaseDataSet
-    // 注入一个依赖
-    @Injection({ uniqueId: 'data-set' })
-    ds3!: BaseDataSet
-    /**
-     * 创建一个 get 请求
-     */
+    // 方法参数名称不匹配时，指定从固定参数读取
+    @HttpGet('test6/:id')
+    test6(@FromRoute('id') id2: string): string {
+        return `GetController test6 = ${new Date().toLocaleTimeString()} id = ${id2}`
+    }
+
+    // 从请求头读取token参数
     @HttpGet()
-    GetNumber() {
-        this.http.ok(`ds获取到：${this.ds.data()} ds2获取到：${this.ds2.data()} ds3获取到：${this.ds3.data()}`)
+    test7(@FromHeader() token: string): string {
+        return `GetController test7 = ${new Date().toLocaleTimeString()} token = ${token}`
+    }
+    // 强制路由转换 为 test8-2
+    @HttpGet('test8-2')
+    test8(): string {
+        return `GetController test8 = ${new Date().toLocaleTimeString()}`
     }
 }
 
-const app = new Koa()
-app.use(KoaRestful({ logs: true })) // 使用 KoaRestful 插件
-app.listen(3000) // 创建 http://localhost:3000
-
-console.log('启动成功，3秒后执行 restful api 请求。')
-console.log('http://localhost:3000')
-
-// 3秒后启动测试脚本
-setTimeout(() => {
-    const baseurl = `http://localhost:3000`
-    const output = async (req: AxiosResponse) => {
-        console.log(`请求地址：${req.config.url}`, req.data)
-    }
-    axios(`${baseurl}/Test/GetNumber`).then(output)
-}, 3000)
-```
-
-### src-example\simple.ts
-
-```typescript
-//src-example\simple.ts
-import { BaseController, Controller, FromQuery, FromRoute, HttpDelete, HttpGet, HttpPost, HttpPut, KoaRestful } from '@wangminghua/koa-restful'
-import axios, { type AxiosResponse } from 'axios'
-import Koa from 'koa'
-
-// 创建一个控制器
+// 创建 其他类型 请求控制器（仅支持类）, 路由参数、查询参数、请求头参数使用方法于GetController一致
 @Controller()
-class TestController extends BaseController {
-    /**
-     * 创建一个 get/post/delete/put 请求
-     */
+class OtherController {
+    // 返回一个字符串 /other/test1
+    @HttpPost()
+    test1(): string {
+        return `GetController test1 = ${new Date().toLocaleTimeString()}`
+    }
+    // 返回修改过的TestModel /other/test2
+    @HttpPost()
+    test2(@FromBody() body: TestModel): TestModel {
+        body.name += '-back'
+        body.value += '-back'
+        return body
+    }
+
+    // 一个方法同时支持多种类型的请求 /other/test3
     @HttpGet()
     @HttpPost()
     @HttpDelete()
+    @HttpPatch()
+    @HttpHead()
     @HttpPut()
-    GetTest() {
-        this.http.ok(`获取到：${1}`)
+    test3(): TestModel {
+        return { name: 'n1', value: 'n2' }
     }
+}
 
-    // 创建一个请求，并读取url查询参数，和路径查询参数
-    @HttpGet('GetTestParameter/:id')
-    GetTestParameter(@FromRoute('id') id: string, @FromQuery('name') name: string) {
-        this.http.ok(`路径参数ID = ${id} 查询参数NAME = ${name}`)
+// 创建 其他类型 请求控制器（仅支持类）, 路由参数、查询参数、请求头参数使用方法于GetController一致
+// 指定控制器路由
+@Controller('api/other')
+class Other2Controller {
+    // 返回一个字符串 /api/other/test1
+    @HttpPost()
+    test1(): string {
+        return `Other2Controller test1 = ${new Date().toLocaleTimeString()}`
+    }
+    // 指定方法路由为 /api/other/t
+    @HttpPost('t')
+    test2(): string {
+        return `Other2Controller test1 = ${new Date().toLocaleTimeString()}`
     }
 }
 
@@ -322,18 +220,117 @@ app.listen(3000) // 创建 http://localhost:3000
 
 console.log('启动成功，3秒后执行 restful api 请求。')
 console.log('http://localhost:3000')
+```
 
-// 3秒后启动测试脚本
-setTimeout(() => {
-    const baseurl = `http://localhost:3000`
-    const output = async (req: AxiosResponse) => {
-        console.log(`${req.config.method} 请求地址：${req.config.url}`, req.data)
+### src-example\di.ts 依赖注入示例
+
+```typescript
+// src-example/di.ts
+import { Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpPatch, HttpPost, HttpPut, KoaRestful } from '@wangminghua/koa-restful'
+import Koa, { Context } from 'koa'
+
+// 测试类型
+type TestModel = { name: string; value: string }
+
+// 创建 GET 请求控制器（仅支持类）
+@Controller()
+class GetController {
+    // 返回一个字符串
+    @HttpGet()
+    test1(): string {
+        return `GetController test1 = ${new Date().toLocaleTimeString()}`
     }
-    axios.get(`${baseurl}/Test/GetTest`).then(output)
-    axios.post(`${baseurl}/Test/GetTest`).then(output)
-    axios.put(`${baseurl}/Test/GetTest`).then(output)
-    axios.delete(`${baseurl}/Test/GetTest`).then(output)
 
-    axios.get(`${baseurl}/Test/GetTestParameter/123`, { params: { name: 'hyi' } }).then(output)
-}, 3000)
+    // 获取查询参数
+    @HttpGet()
+    test2(@FromQuery() name: string): string {
+        return `GetController test2 = ${new Date().toLocaleTimeString()} name = ${name}`
+    }
+
+    // 获取路径参数
+    @HttpGet('test3/:id')
+    test3(@FromRoute() id: string): string {
+        return `GetController test3 = ${new Date().toLocaleTimeString()} id = ${id}`
+    }
+
+    // 读取路径参数和查询参数
+    @HttpGet('test4/:id')
+    test4(@FromRoute() id: string, @FromQuery() name: string): string {
+        return `GetController test4 = ${new Date().toLocaleTimeString()} id = ${id} name = ${name}`
+    }
+
+    // 第一个参数默认为Koa Context
+    @HttpGet('test5/:id')
+    test5(ctx: Context, @FromRoute() id: string, @FromQuery() name: string): string {
+        return `GetController test5 = ${new Date().toLocaleTimeString()} id = ${id} name = ${name} ip = ${ctx.request.ip}`
+    }
+
+    // 方法参数名称不匹配时，指定从固定参数读取
+    @HttpGet('test6/:id')
+    test6(@FromRoute('id') id2: string): string {
+        return `GetController test6 = ${new Date().toLocaleTimeString()} id = ${id2}`
+    }
+
+    // 从请求头读取token参数
+    @HttpGet()
+    test7(@FromHeader() token: string): string {
+        return `GetController test7 = ${new Date().toLocaleTimeString()} token = ${token}`
+    }
+    // 强制路由转换 为 test8-2
+    @HttpGet('test8-2')
+    test8(): string {
+        return `GetController test8 = ${new Date().toLocaleTimeString()}`
+    }
+}
+
+// 创建 其他类型 请求控制器（仅支持类）, 路由参数、查询参数、请求头参数使用方法于GetController一致
+@Controller()
+class OtherController {
+    // 返回一个字符串 /other/test1
+    @HttpPost()
+    test1(): string {
+        return `GetController test1 = ${new Date().toLocaleTimeString()}`
+    }
+    // 返回修改过的TestModel /other/test2
+    @HttpPost()
+    test2(@FromBody() body: TestModel): TestModel {
+        body.name += '-back'
+        body.value += '-back'
+        return body
+    }
+
+    // 一个方法同时支持多种类型的请求 /other/test3
+    @HttpGet()
+    @HttpPost()
+    @HttpDelete()
+    @HttpPatch()
+    @HttpHead()
+    @HttpPut()
+    test3(): TestModel {
+        return { name: 'n1', value: 'n2' }
+    }
+}
+
+// 创建 其他类型 请求控制器（仅支持类）, 路由参数、查询参数、请求头参数使用方法于GetController一致
+// 指定控制器路由
+@Controller('api/other')
+class Other2Controller {
+    // 返回一个字符串 /api/other/test1
+    @HttpPost()
+    test1(): string {
+        return `Other2Controller test1 = ${new Date().toLocaleTimeString()}`
+    }
+    // 指定方法路由为 /api/other/t
+    @HttpPost('t')
+    test2(): string {
+        return `Other2Controller test1 = ${new Date().toLocaleTimeString()}`
+    }
+}
+
+const app = new Koa()
+app.use(KoaRestful({ logs: true })) // 使用 KoaRestful 插件
+app.listen(3000) // 创建 http://localhost:3000
+
+console.log('启动成功，3秒后执行 restful api 请求。')
+console.log('http://localhost:3000')
 ```
