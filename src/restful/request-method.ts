@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { KEY_METHOD, RecordMethods, parsePropertyKey } from '../shared'
+import { KEY_METHOD, RecordMethods, parsePropertyKey } from '../utils/shared'
 
 const parseRecordMethods = (target: Object): RecordMethods => {
     if (!Reflect.hasMetadata(KEY_METHOD, target.constructor)) {

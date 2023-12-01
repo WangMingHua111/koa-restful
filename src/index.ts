@@ -1,14 +1,16 @@
+import 'reflect-metadata'
+
 import Router from '@koa/router'
 import { Context, HttpError as KoaHttpError, Next } from 'koa'
 import compose from 'koa-compose'
-import 'reflect-metadata'
 import { getControllers } from './restful'
-import { HttpError, KEY_CONTROLLER, KEY_METHOD, KEY_PARAMETER, ParameterConverterFn, RecordMethods, RequestMethod } from './shared'
+import { HttpError, KEY_CONTROLLER, KEY_METHOD, KEY_PARAMETER, ParameterConverterFn, RecordMethods, RequestMethod } from './utils/shared'
 
-export * from './di'
+export * from '@wangminghua/di'
 export * from './restful'
-export * from './services'
-export { HttpError } from './shared'
+export * from './services/cache-service'
+export * from './services/logger-service'
+export { HttpError } from './utils/shared'
 
 type KoaRestfulOptions = {
     /**

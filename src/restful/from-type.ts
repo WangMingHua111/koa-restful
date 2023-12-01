@@ -1,6 +1,6 @@
 import { bodyParser } from '@koa/bodyparser'
 import { Context, Next } from 'koa'
-import { KEY_PARAMETER, ParameterConverter, ParameterConverterFn, ParameterConverterType, TParam, parseParameterName, parsePropertyKey } from '../shared'
+import { KEY_PARAMETER, ParameterConverter, ParameterConverterFn, ParameterConverterType, TParam, parseParameterName, parsePropertyKey } from '../utils/shared'
 import { BooleanArrayParameterConverter, BooleanParameterConverter, NumberArrayParameterConverter, NumberParameterConverter, StringArrayParameterConverter, StringParameterConverter } from './parameter-converter'
 
 function readParams(params: any, p: TParam) {
