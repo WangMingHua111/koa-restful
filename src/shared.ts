@@ -95,31 +95,23 @@ export type ParameterConverterFn = (ctx: Context, next: Next) => Promise<any> | 
 export type ParameterConverterType = ParameterConverter | 'str' | 'strs' | 'num' | 'nums' | 'boolean' | 'booleans'
 
 /**
- * 内部的Http便捷方法
+ * 请求错误
  */
-export class InnerHttp {
-    public ctx: Context
-    constructor(ctx: Context) {
-        this.ctx = ctx
+export class HttpError extends Error {
+    /**
+     * 错误状态吗
+     */
+    status: number
+    /**
+     * HttpError
+     * @param message 错误消息
+     * @param status 状态码，默认值400
+     */
+    constructor(message: string, status: number = 400) {
+        super()
+        this.message = message
+        this.status = status
     }
-    public ok(data?: any): void {
-        this.ctx.response.status = 200
-        this.ctx.response.body = data
-    }
-    public bad(data?: any): void {
-        this.custom(400, data)
-    }
-    public unauthorized(data?: any) {
-        this.custom(401, data)
-    }
-    public forbidden(data?: any) {
-        this.custom(403, data)
-    }
-    public custom(status: number, data?: any) {
-        this.ctx.response.status = status
-        if (data !== undefined) this.ctx.response.body = data
-    }
-    // todo 401 403 500 等
 }
 /**
  * 解析属性名
@@ -129,6 +121,7 @@ export function parsePropertyKey(propertyKey: string | symbol | undefined): stri
     const property = typeof propertyKey === 'string' ? propertyKey : (propertyKey as any).name
     return property
 }
+
 /**
  * 解析方法参数名
  * @param target

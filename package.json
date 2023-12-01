@@ -9,11 +9,7 @@
         "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
         "build-readme": "node ./script/build-readme.js",
         "build-all": "npm run build && npm run build-example && npm run build-readme",
-        "run-simple": "node ./dist-example/simple.js",
-        "run-simple-injection": "node ./dist-example/simple-injection.js",
-        "run-simple-alias-injection": "node ./dist-example/simple-alias-injection.js",
-        "run-simple-static-injection": "node ./dist-example/simple-static-injection.js",
-        "run-simple-resolve": "node ./dist-example/simple-resolve.js",
+        "run-example": "node ./dist-example/simple.js",
         "docs:build": "vitepress build docs",
         "docs:serve": "vitepress serve docs"
     },

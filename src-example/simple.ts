@@ -1,25 +1,26 @@
-import { BaseController, Controller, FromQuery, FromRoute, HttpDelete, HttpGet, HttpPost, HttpPut, KoaRestful } from '@wangminghua/koa-restful'
-import axios, { type AxiosResponse } from 'axios'
-import Koa from 'koa'
+import { Controller, FromQuery, FromRoute, HttpGet, KoaRestful } from '@wangminghua/koa-restful'
+import { type AxiosResponse } from 'axios'
+import Koa, { Context } from 'koa'
 
 // 创建一个控制器
 @Controller()
-class TestController extends BaseController {
+class TestController {
     /**
      * 创建一个 get/post/delete/put 请求
      */
     @HttpGet()
-    @HttpPost()
-    @HttpDelete()
-    @HttpPut()
-    GetTest() {
-        this.http.ok(`获取到：${1}`)
+    GetTest(): void {
+        throw new Error('哈哈哈')
+        // return {
+        //     a: `获取到：${2}`,
+        //     b: 1,
+        // }
     }
 
     // 创建一个请求，并读取url查询参数，和路径查询参数
     @HttpGet('GetTestParameter/:id')
-    GetTestParameter(@FromRoute('id') id: string, @FromQuery() name: string = '123') {
-        this.http.ok(`路径参数ID = ${id} 查询参数NAME = ${name}`)
+    GetTestParameter(ctx: Context, @FromRoute() id: string, @FromQuery() name: string = '123') {
+        return `路径参数ID = ${id} 查询参数NAME = ${name} ${ctx.ip}`
     }
 }
 
@@ -36,10 +37,10 @@ setTimeout(() => {
     const output = async (req: AxiosResponse) => {
         console.log(`${req.config.method} 请求地址：${req.config.url}`, req.data)
     }
-    axios.get(`${baseurl}/Test/GetTest`).then(output)
-    axios.post(`${baseurl}/Test/GetTest`).then(output)
-    axios.put(`${baseurl}/Test/GetTest`).then(output)
-    axios.delete(`${baseurl}/Test/GetTest`).then(output)
+    // axios.get(`${baseurl}/Test/GetTest`).then(output)
+    // axios.post(`${baseurl}/Test/GetTest`).then(output)
+    // axios.put(`${baseurl}/Test/GetTest`).then(output)
+    // axios.delete(`${baseurl}/Test/GetTest`).then(output)
 
-    axios.get(`${baseurl}/Test/GetTestParameter/123`, { params: { name: 'hyi' } }).then(output)
+    // axios.get(`${baseurl}/Test/GetTestParameter/123`, { params: { name: 'hyi' } }).then(output)
 }, 3000)
