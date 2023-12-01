@@ -129,3 +129,27 @@ export function parsePropertyKey(propertyKey: string | symbol | undefined): stri
     const property = typeof propertyKey === 'string' ? propertyKey : (propertyKey as any).name
     return property
 }
+/**
+ * 解析方法参数名
+ * @param target
+ * @param propertyKey 方法名
+ * @param parameterIndex 参数索引
+ * @returns
+ */
+export function parseParameterName(target: { [name in string]: Function }, propertyKey: string | symbol | undefined, parameterIndex: number): string {
+    const method = parsePropertyKey(propertyKey)
+    const names = getParameterNames(target[method])
+    return names[parameterIndex]
+}
+
+/**
+ * 通过Function toString解析参数列表
+ * @param func
+ * @returns
+ */
+function getParameterNames(func: Function) {
+    const functionAsString = func.toString()
+    // 通过正则表达式匹配函数参数
+    const parameterNames = functionAsString.slice(functionAsString.indexOf('(') + 1, functionAsString.indexOf(')')).match(/([^\s,]+)/g)
+    return parameterNames || []
+}

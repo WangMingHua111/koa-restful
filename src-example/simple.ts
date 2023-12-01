@@ -18,7 +18,7 @@ class TestController extends BaseController {
 
     // 创建一个请求，并读取url查询参数，和路径查询参数
     @HttpGet('GetTestParameter/:id')
-    GetTestParameter(@FromRoute('id') id: string, @FromQuery('name') name: string) {
+    GetTestParameter(@FromRoute('id') id: string, @FromQuery() name: string = '123') {
         this.http.ok(`路径参数ID = ${id} 查询参数NAME = ${name}`)
     }
 }
