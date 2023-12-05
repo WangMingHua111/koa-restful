@@ -9,7 +9,9 @@
         "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
         "build-all": "npm run build && npm run build-example",
         "run-example": "node ./dist-example/simple.js",
+        "run-example-ts": "ts-node ./src-example/simple.ts",
         "run-di": "node ./dist-example/di.js",
+        "run-di-ts": "ts-node ./src-example/di.ts",
         "docs:build": "vitepress build docs",
         "docs:serve": "vitepress serve docs"
     },
@@ -43,6 +45,7 @@
         "@wangminghua/koa-restful": "file:./",
         "axios": "^1.5.0",
         "rimraf": "^5.0.5",
+        "ts-node": "^10.9.1",
         "vitepress": "^1.0.0-rc.30"
     },
     "repository": {
