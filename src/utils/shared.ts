@@ -22,6 +22,25 @@ export function tfunc<T extends Function>(fn: T): T {
     return t
 }
 /**
+ * 路径合成
+ * @param args
+ * @returns
+ */
+export function join(...args: string[]): string {
+    return args
+        .filter((str) => str)
+        .map((str) => (str.startsWith('/') ? str : '/' + str))
+        .join('')
+}
+/**
+ * isNullOrUndefined
+ * @param route
+ * @returns
+ */
+export function isNullOrUndefined(route: string | undefined | null) {
+    return route === undefined || route === null
+}
+/**
  * 参数
  */
 export type TParam =

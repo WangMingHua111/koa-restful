@@ -10,7 +10,7 @@ export * from '@wangminghua/di'
 export * from './restful'
 export * from './services/cache-service'
 export * from './services/logger-service'
-export { HttpError } from './utils/shared'
+export { HttpError, isNullOrUndefined, join } from './utils/shared'
 
 type KoaRestfulOptions = {
     /**
