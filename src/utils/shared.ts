@@ -1,8 +1,38 @@
+import { Lifecycle } from '@wangminghua/di'
 import { Context, Next } from 'koa'
 
-export const KEY_CONTROLLER = 'api:controller'
-export const KEY_METHOD = 'api:method'
-export const KEY_PARAMETER = 'api:parameter'
+/**
+ * Route KEY
+ */
+export const KEY_ROUTE = '__ROUTE__'
+/**
+ * Method KEY
+ */
+export const KEY_METHOD = '__METHOD__'
+/**
+ * Parameter KEY
+ */
+export const KEY_PARAMETER = '__PARAMETER__'
+
+/**
+ * 控制器默认配置项
+ */
+export const DefaultControllerOptions: {
+    /**
+     * 默认控制器生命周期
+     * @default 'transient'
+     */
+    defaultLifecycle: Lifecycle
+    /**
+     * 默认路由前缀，当控制器设置了 prefix 后会覆盖该选项
+     * @default '/api'
+     */
+    defaultRoutePrefix: string
+} = {
+    defaultLifecycle: 'transient',
+    defaultRoutePrefix: '/api',
+}
+
 /**
  * 将对象转换为koa传输字符串数据
  * @param obj
@@ -40,6 +70,7 @@ export function join(...args: string[]): string {
 export function isNullOrUndefined(route: string | undefined | null) {
     return route === undefined || route === null
 }
+
 /**
  * 参数
  */
