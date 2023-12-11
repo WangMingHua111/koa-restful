@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { OpenAPIV3 } from 'openapi-types'
-import { ClassDeclaration, Decorator, InterfaceDeclaration, JSDoc, JSDocParameterTag, JSDocUnknownTag, MethodDeclaration, Project, PropertySignature, SourceFile, Symbol, Type, TypeAliasDeclaration, ts } from 'ts-morph'
+import { ClassDeclaration, Decorator, InterfaceDeclaration, JSDoc, JSDocParameterTag, JSDocUnknownTag, JSDocableNode, MethodDeclaration, Project, SourceFile, Symbol, Type, TypeAliasDeclaration, ts } from 'ts-morph'
 import { Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpOptions, HttpPatch, HttpPost, HttpPut } from '../restful'
 import { DefaultControllerOptions, join } from '../utils/shared'
 
@@ -79,7 +79,7 @@ class AST2OpenAPI {
 
         for (const method of cls.getMethods()) {
             const methodName = method.getName()
-            const jsdoc = method.getJsDocs()
+            const jsdoc = this.#getJsDocs(method)
             for (const methodDecorator of method.getDecorators()) {
                 const methodDecoratorName = methodDecorator.getName()
                 if (!Reflect.has(methodMapping, methodDecoratorName)) continue // 不是路由方法跳过
@@ -263,7 +263,7 @@ class AST2OpenAPI {
         for (const property of properties) {
             var valueDeclarator = property.getValueDeclaration()
             if (!valueDeclarator) continue
-            schema.properties[property.getName()] = this.#parseSchemaObject(valueDeclarator.getType(), (valueDeclarator as PropertySignature)?.getJsDocs())
+            schema.properties[property.getName()] = this.#parseSchemaObject(valueDeclarator.getType(), this.#getJsDocs(valueDeclarator as unknown as JSDocableNode))
         }
         return schema
     }
@@ -388,6 +388,9 @@ class AST2OpenAPI {
             typeText = typeText.replace(/^import\(.+\)/i, hashStr)
         }
         return typeText
+    }
+    #getJsDocs(node?: JSDocableNode): JSDoc[] {
+        return node?.getJsDocs?.() || []
     }
 }
 
