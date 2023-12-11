@@ -1,5 +1,5 @@
 import { IScopeService, Lifecycle, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
-import { KEY_ROUTE } from '../utils/shared'
+import { KEY_ROUTE, KEY_ROUTE_PREFIX, isNullOrUndefined } from '../utils/shared'
 
 export * from './from-type'
 export * from './request-method'
@@ -8,16 +8,47 @@ export * from './request-method'
 const controllers = new Set<IScopeService>()
 
 /**
+ * 控制器选项
+ */
+export type ControllerOptions =
+    | Lifecycle
+    | {
+          /**
+           * 实例生命周期
+           * @default 'transient'
+           */
+          lifecycle?: Lifecycle
+          /**
+           * 路由前缀，设置该选项时使用指定路由前缀，可以设置为空字符串''，代表移除路由前缀
+           */
+          prefix?: string
+          /**
+           * 控制器启用的
+           * @default true
+           */
+          enabled?: boolean
+      }
+
+/**
  * 控制器（装饰器）
  * @param route
  * @param lifecycle 默认值：transient
  * @returns
  */
-export function Controller(route?: string, lifecycle: Lifecycle = 'transient'): ClassDecorator {
+export function Controller(route?: string, lifecycle: ControllerOptions = 'transient'): ClassDecorator {
+    const temp: ControllerOptions = {
+        lifecycle: 'transient',
+        prefix: undefined,
+        enabled: true,
+    }
+    const options = Object.assign(temp, typeof lifecycle === 'string' ? { lifecycle } : typeof lifecycle === 'object' ? { ...lifecycle } : undefined)
     return function (target: Function) {
         Reflect.defineMetadata(KEY_ROUTE, route || target.name.replace(/Controller$/i, ''), target)
+        if (!isNullOrUndefined(options.prefix)) {
+            Reflect.defineMetadata(KEY_ROUTE_PREFIX, options.prefix, target)
+        }
         let service: IScopeService
-        switch (lifecycle) {
+        switch (options.lifecycle) {
             case 'singleton':
                 service = new SingletonScopeService(target)
                 break
@@ -26,7 +57,7 @@ export function Controller(route?: string, lifecycle: Lifecycle = 'transient'): 
                 service = new TransientScopeService(target)
                 break
         }
-        controllers.add(service)
+        options.enabled && controllers.add(service)
     }
 }
 

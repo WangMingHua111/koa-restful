@@ -6,6 +6,10 @@ import { Context, Next } from 'koa'
  */
 export const KEY_ROUTE = '__ROUTE__'
 /**
+ * Route Prefix KEY
+ */
+export const KEY_ROUTE_PREFIX = '__ROUTE_PREFIX__'
+/**
  * Method KEY
  */
 export const KEY_METHOD = '__METHOD__'

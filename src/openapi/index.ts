@@ -358,7 +358,19 @@ class AST2OpenAPI {
         return media
     }
     #parseResponses(method: MethodDeclaration): OpenAPIV3.ResponsesObject {
-        const returnType = method.getReturnType()
+        let returnType = method.getReturnType()
+        // 特殊处理Promise<T>类型的返回值
+        if (returnType.getTargetType()?.getText() === 'Promise<T>') {
+            returnType = returnType.getTypeArguments()[0]
+            // 不存在
+            if (!returnType) {
+                return {
+                    '200': {
+                        description: '成功',
+                    },
+                }
+            }
+        }
         const mtype = this.#parseNonArraySchemaObject(returnType.getArrayElementType() || returnType)
         let media = this.#parseMedia(returnType)
         return {
