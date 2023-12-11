@@ -1,5 +1,6 @@
 import { IScopeService, Lifecycle, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
-import { KEY_CONTROLLER } from '../utils/shared'
+import { KEY_ROUTE } from '../utils/shared'
+
 export * from './from-type'
 export * from './request-method'
 
@@ -14,7 +15,7 @@ const controllers = new Set<IScopeService>()
  */
 export function Controller(route?: string, lifecycle: Lifecycle = 'transient'): ClassDecorator {
     return function (target: Function) {
-        Reflect.defineMetadata(KEY_CONTROLLER, route || target.name.replace(/Controller$/i, ''), target)
+        Reflect.defineMetadata(KEY_ROUTE, route || target.name.replace(/Controller$/i, ''), target)
         let service: IScopeService
         switch (lifecycle) {
             case 'singleton':

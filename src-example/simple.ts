@@ -4,10 +4,15 @@ import Koa, { Context } from 'koa'
 // 测试类型
 type TestModel = { name: string; value: string }
 
-// 创建 GET 请求控制器（仅支持类）
+/**
+ * 创建 GET 请求控制器（仅支持类）
+ */
 @Controller()
 class GetController {
-    // 返回一个字符串
+    /**
+     * 返回一个字符串
+     * @returns
+     */
     @HttpGet()
     test1(): string {
         return `GetController test1 = ${new Date().toLocaleTimeString()}`

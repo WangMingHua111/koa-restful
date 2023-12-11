@@ -1,6 +1,6 @@
 {
     "name": "@wangminghua/koa-restful",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使用 TypeScript 构建。它旨在提供一种轻量、高效、易用的方式来构建 RESTful 风格的后端服务。",
     "main": "./dist/index.js",
     "types": "./dist/types/index.d.ts",
@@ -9,7 +9,10 @@
         "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
         "build-all": "npm run build && npm run build-example",
         "run-example": "node ./dist-example/simple.js",
+        "run-example-ts": "ts-node ./src-example/simple.ts",
         "run-di": "node ./dist-example/di.js",
+        "run-di-ts": "ts-node ./src-example/di.ts",
+        "run-openapi-ts": "ts-node ./src-example/openapi.ts",
         "docs:build": "vitepress build docs",
         "docs:serve": "vitepress serve docs"
     },
@@ -42,7 +45,10 @@
         "@types/koa-compose": "^3.2.8",
         "@wangminghua/koa-restful": "file:./",
         "axios": "^1.5.0",
+        "openapi-types": "^12.1.3",
         "rimraf": "^5.0.5",
+        "ts-morph": "^21.0.1",
+        "ts-node": "^10.9.1",
         "vitepress": "^1.0.0-rc.30"
     },
     "repository": {
