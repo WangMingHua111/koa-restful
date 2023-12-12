@@ -5,7 +5,7 @@ import { Context, HttpError as KoaHttpError, Next } from 'koa'
 import compose from 'koa-compose'
 
 import { getControllers } from './restful'
-import { DefaultControllerOptions, HttpError, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, ParameterConverterFn, RecordMethods, RequestMethod } from './utils/shared'
+import { DefaultControllerOptions, HttpError, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod } from './utils/shared'
 
 export * from '@wangminghua/di'
 export * from './openapi'
@@ -49,13 +49,14 @@ export function KoaRestful(options?: KoaRestfulOptions) {
     for (const controller of controllers) {
         const defaultRoutePrefix = DefaultControllerOptions.defaultRoutePrefix
         const controllerRoute = Reflect.getMetadata(KEY_ROUTE, controller.cls)
+        const controllerRoutePrefix = Reflect.getMetadata(KEY_ROUTE_PREFIX, controller.cls)
         const methods: RecordMethods = Reflect.getMetadata(KEY_METHOD, controller.cls)
         for (const property in methods) {
             const key = property as RequestMethod
             const arr = methods[key]
             arr.forEach(({ route, propertyKey }) => {
                 const parameters: Record<number, ParameterConverterFn> = Reflect.getMetadata(`${KEY_PARAMETER}:${propertyKey}`, controller.cls) || {}
-                const path = join(defaultRoutePrefix, controllerRoute, isNullOrUndefined(route) ? propertyKey : (route as string))
+                const path = join(controllerRoutePrefix ?? defaultRoutePrefix, controllerRoute, isNullOrUndefined(route) ? propertyKey : (route as string))
                 log?.(`${property} ${path}`)
                 router[property as RequestMethod](join(path), async (ctx: Context, next: Next) => {
                     // 获取控制器示例

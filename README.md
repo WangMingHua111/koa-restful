@@ -50,7 +50,7 @@ Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使�
 ### 依赖
 
 ```sh
-npm install koa @wangminghua/koa-restful
+npm install reflect-metadata koa @wangminghua/koa-restful typescript
 ```
 
 ### 开发前的配置要求
@@ -90,7 +90,7 @@ cd simple-api
 # npm 初始化，执行npm初始化流程
 npm init
 # 安装 koa 和 koa-restful
-npm install koa @wangminghua/koa-restful
+npm install reflect-metadata koa @wangminghua/koa-restful typescript
 # 执行typescript配置文件初始化
 npx tsc --init
 ```
