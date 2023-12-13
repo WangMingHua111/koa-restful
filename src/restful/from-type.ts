@@ -145,8 +145,10 @@ export function FromBody(options?: BodyParserOptions): ParameterDecorator {
         // const parameterName = parseParameterName(target as any, propertyKey, parameterIndex)
         const metakey = `${KEY_PARAMETER}:${parsePropertyKey(propertyKey)}`
         const metadata: Record<number, ParameterConverterFn> = Reflect.getMetadata(metakey, target.constructor) || {}
-        metadata[parameterIndex] = async (ctx: Context, next: Next) => {
+        metadata[parameterIndex] = async (ctx: Context) => {
+            const next: Next = async () => {}
             await bodyParser(options as any)(ctx, next)
+            await next() // 等待body读取完毕
             return ctx.request.body
         }
         Reflect.defineMetadata(metakey, metadata, target.constructor)
