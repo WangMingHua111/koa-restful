@@ -36,7 +36,7 @@ Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使�
     <a href="https://wangminghua111.github.io/koa-restful/"><strong>探索本项目的文档 »</strong></a>
     <br />
     <br />
-    <a href="https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13">查看Demo</a>
+    <a href="https://codesandbox.io/p/github/WangMingHua111/koa-restful-quick-start/master">查看Demo/在线测试</a>
     ·
     <a href="https://github.com/wangminghua111/koa-restful/issues">报告Bug</a>
     ·
