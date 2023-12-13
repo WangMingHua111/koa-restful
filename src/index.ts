@@ -5,7 +5,7 @@ import { Context, HttpError as KoaHttpError, Next } from 'koa'
 import compose from 'koa-compose'
 
 import { getControllers } from './restful'
-import { DefaultControllerOptions, HttpError, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod } from './utils/shared'
+import { DefaultControllerOptions, HttpError, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod, isNullOrUndefined, join } from './utils/shared'
 
 export * from '@wangminghua/di'
 export * from './openapi'
@@ -21,26 +21,16 @@ type KoaRestfulOptions = {
     logs?: boolean
 }
 
-const router = new Router()
 /**
- * Koa 中间件
- * @param this
- * @param ctx
- * @param next
+ * 延迟处理化控制器
+ * @param options
+ * @returns
  */
-export function KoaRestful(options?: KoaRestfulOptions) {
+async function delayInit(options?: KoaRestfulOptions) {
+    const router = new Router()
     const opts: KoaRestfulOptions = {
         logs: false,
         ...options,
-    }
-    const join = (...args: string[]): string => {
-        return args
-            .filter((str) => str)
-            .map((str) => (str.startsWith('/') ? str : '/' + str))
-            .join('')
-    }
-    const isNullOrUndefined = (route: string | undefined | null) => {
-        return route === undefined || route === null
     }
     const log = opts.logs ? console.log : undefined
 
@@ -57,6 +47,7 @@ export function KoaRestful(options?: KoaRestfulOptions) {
             arr.forEach(({ route, propertyKey }) => {
                 const parameters: Record<number, ParameterConverterFn> = Reflect.getMetadata(`${KEY_PARAMETER}:${propertyKey}`, controller.cls) || {}
                 const path = join(controllerRoutePrefix ?? defaultRoutePrefix, controllerRoute, isNullOrUndefined(route) ? propertyKey : (route as string))
+
                 log?.(`${property} ${path}`)
                 router[property as RequestMethod](join(path), async (ctx: Context, next: Next) => {
                     // 获取控制器示例
@@ -104,8 +95,20 @@ export function KoaRestful(options?: KoaRestfulOptions) {
     }
     const routers = router.routes()
     const allowedMethods = router.allowedMethods()
-    const dispatch = (ctx: any, next: Next) => {
-        // debugger
+    return [routers, allowedMethods]
+}
+
+/**
+ * Koa 中间件
+ * @param this
+ * @param ctx
+ * @param next
+ */
+export function KoaRestful(options?: KoaRestfulOptions) {
+    let ready: ReturnType<typeof delayInit>
+    const dispatch = async (ctx: any, next: Next) => {
+        if (ready === undefined) ready = delayInit(options)
+        const [routers, allowedMethods] = await ready
         return compose([routers, allowedMethods])(ctx, next)
     }
     return dispatch
