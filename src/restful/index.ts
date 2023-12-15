@@ -1,5 +1,5 @@
 import { IScopeService, Lifecycle, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
-import { KEY_ROUTE, KEY_ROUTE_PREFIX, isNullOrUndefined } from '../utils/shared'
+import { DefaultControllerOptions, KEY_ROUTE, KEY_ROUTE_PREFIX, isNullOrUndefined } from '../utils/shared'
 
 export * from './from-type'
 export * from './request-method'
@@ -35,9 +35,9 @@ export type ControllerOptions =
  * @param lifecycle 默认值：transient
  * @returns
  */
-export function Controller(route?: string, lifecycle: ControllerOptions = 'transient'): ClassDecorator {
+export function Controller(route?: string, lifecycle?: ControllerOptions): ClassDecorator {
     const temp: ControllerOptions = {
-        lifecycle: 'transient',
+        lifecycle: DefaultControllerOptions.defaultLifecycle,
         prefix: undefined,
         enabled: true,
     }

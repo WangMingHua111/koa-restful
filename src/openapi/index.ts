@@ -4,8 +4,6 @@ import { ClassDeclaration, Decorator, InterfaceDeclaration, JSDoc, JSDocParamete
 import { Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpOptions, HttpPatch, HttpPost, HttpPut } from '../restful'
 import { DefaultControllerOptions, join } from '../utils/shared'
 
-const { defaultRoutePrefix } = DefaultControllerOptions
-
 /**
  * 生成校验码
  * @param inputString
@@ -145,7 +143,7 @@ class AST2OpenAPI {
         const route = this.#parseFirstParameter(controllerDecorator)
         const route2 = this.#parseFirstParameter(dec).replace(/:(\w+)/g, '{$1}')
 
-        return join(defaultRoutePrefix, route || (cls.getName() || '').replace(/Controller$/i, ''), route2 || metName)
+        return join(DefaultControllerOptions.defaultRoutePrefix, route || (cls.getName() || '').replace(/Controller$/i, ''), route2 || metName)
     }
     /**
      * 读取装饰器第一个参数，示例：@Controller(`get2`) 读取 get2
