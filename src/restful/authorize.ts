@@ -25,7 +25,7 @@ export function Authorize(authenticationSchemes?: string | string[]): MethodDeco
             if (container.size === 0) throw new Error('没有任何身份验证方案')
 
             // 没有指定身份认证方案，使用默认的方案进行认证
-            let schemes: string[] = Array.isArray(authenticationSchemes) ? authenticationSchemes : isNullOrUndefined(authenticationSchemes) ? [container.keys()[0]] : [authenticationSchemes as string]
+            let schemes: string[] = Array.isArray(authenticationSchemes) ? authenticationSchemes : isNullOrUndefined(authenticationSchemes) ? [[...container.keys()][0]] : [authenticationSchemes as string]
             // 遍历执行认证方案
             for (const scheme of schemes) {
                 if (!container.has(scheme)) throw new Error(`无效的认证方案:${scheme}`)
