@@ -1,6 +1,7 @@
 import { IScopeService, Lifecycle, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
 import { DefaultControllerOptions, KEY_ROUTE, KEY_ROUTE_PREFIX, isNullOrUndefined } from '../utils/shared'
 
+export * from './authorize'
 export * from './from-type'
 export * from './request-method'
 
