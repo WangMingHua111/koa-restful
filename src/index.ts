@@ -5,7 +5,8 @@ import { Context, HttpError as KoaHttpError, Next } from 'koa'
 import compose from 'koa-compose'
 
 import { getControllers } from './restful'
-import { DefaultControllerOptions, HttpError, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod, isNullOrUndefined, join } from './utils/shared'
+import { Hook } from './utils/aspect'
+import { DefaultControllerOptions, HttpError, KEY_AFTER_HOOK, KEY_BEFORE_HOOK, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod, isNullOrUndefined, join, parsePropertyKey } from './utils/shared'
 
 export * from '@wangminghua/di'
 export * from './openapi'
@@ -19,6 +20,20 @@ type KoaRestfulOptions = {
      * 开启日志
      */
     logs?: boolean
+}
+
+function parseBeforeHooks(cls: Function, propertyKey: string): Array<Hook> {
+    const metadataKey = `${KEY_BEFORE_HOOK}${parsePropertyKey(propertyKey)}`
+    const hooks = Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined
+
+    return hooks || []
+}
+
+function parseAfterHooks(cls: Function, propertyKey: string): Array<Hook> {
+    const metadataKey = `${KEY_AFTER_HOOK}${parsePropertyKey(propertyKey)}`
+    const hooks = Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined
+
+    return hooks || []
 }
 
 /**
@@ -70,13 +85,28 @@ async function delayInit(options?: KoaRestfulOptions) {
                         args.splice(index, 1, value)
                     }
                     //#endregion
+
                     try {
+                        //#region 调用前置钩子函数
+                        const beforeHooks = parseBeforeHooks(controller.cls, propertyKey)
+                        for (const hook of beforeHooks) {
+                            await hook(ctx)
+                        }
+                        //#endregion
+
                         // 调用控制器方法，通过bind设置上下文
                         const fnResult = fn?.apply(instance, args)
                         const data = fnResult instanceof Promise ? await fnResult : fnResult
                         ctx.response.status = 200
                         ctx.response.body = data
                         await next()
+
+                        //#region 调用后置钩子函数
+                        const afterHooks = parseAfterHooks(controller.cls, propertyKey)
+                        for (const hook of afterHooks) {
+                            await hook(ctx)
+                        }
+                        //#endregion
                     } catch (e: any) {
                         if (e instanceof HttpError) {
                             ctx.response.status = e.status

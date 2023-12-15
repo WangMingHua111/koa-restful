@@ -2,6 +2,14 @@ import { Lifecycle } from '@wangminghua/di'
 import { Context, Next } from 'koa'
 
 /**
+ * Before Hook KEY
+ */
+export const KEY_BEFORE_HOOK = '__BEFORE_HOOK__'
+/**
+ * After Hook KEY
+ */
+export const KEY_AFTER_HOOK = '__AFTER_HOOK__'
+/**
  * Route KEY
  */
 export const KEY_ROUTE = '__ROUTE__'
