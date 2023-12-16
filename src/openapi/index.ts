@@ -52,7 +52,7 @@ class AST2OpenAPI {
      * @param authorizationScheme 授权模式名称
      * @param securitySchemeObject
      */
-    addSecurityScheme(authorizationScheme: string, securitySchemeObject: OpenAPIV3.SecuritySchemeObject) {
+    addSecurityScheme(authorizationScheme: string, securitySchemeObject: OpenAPIV3.SecuritySchemeObject): AST2OpenAPI {
         const securitySchemes = this.openapi.components?.securitySchemes as {
             [key: string]: OpenAPIV3.SecuritySchemeObject | OpenAPIV3.ReferenceObject
         }
