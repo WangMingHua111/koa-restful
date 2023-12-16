@@ -67,6 +67,7 @@ async function delayInit(options?: KoaRestfulOptions) {
                 router[property as RequestMethod](join(path), async (ctx: Context, next: Next) => {
                     // 获取控制器示例
                     const instance = controller.instance()
+                    instance.__ctx = ctx
                     // 获取控制器方法
                     const fn = instance[propertyKey] as Function | undefined
                     // 设置默认参数

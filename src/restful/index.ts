@@ -63,6 +63,16 @@ export function Controller(route?: string, lifecycle?: ControllerOptions): Class
 }
 
 /**
+ * 用于手动添加控制器
+ * @param target 控制器实例
+ * @param route
+ * @param lifecycle 默认值：transient
+ */
+export function AddController(target: Function, route?: string, lifecycle?: ControllerOptions) {
+    Controller(route, lifecycle)(target)
+}
+
+/**
  * 获取 Controller 控制器列表
  */
 export function getControllers() {
