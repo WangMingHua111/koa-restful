@@ -14,16 +14,26 @@ type AspectOptions = {
      * 钩子类型
      */
     hookType: typeof KEY_BEFORE_HOOK | typeof KEY_AFTER_HOOK
+    /**
+     * 定义元数据
+     * @param target
+     * @param propertyKey
+     * @returns
+     */
+    metadataHook?: (target: Object, propertyKey: string | symbol) => void
 }
 /**
  * 切面函数
  */
 export function Aspect(hook: Hook, options?: AspectOptions): MethodDecorator {
-    const { hookType } = {
+    const { hookType, metadataHook } = {
         hookType: KEY_BEFORE_HOOK,
         ...options,
     } as AspectOptions
     return function (target: Object, propertyKey: string | symbol): void {
+        // 用于定义元数据
+        metadataHook?.(target, propertyKey)
+
         const metadataKey = `${hookType}${parsePropertyKey(propertyKey)}`
         if (!Reflect.hasMetadata(metadataKey, target.constructor)) {
             Reflect.defineMetadata(metadataKey, [], target.constructor)

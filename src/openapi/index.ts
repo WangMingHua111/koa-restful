@@ -25,6 +25,7 @@ class AST2OpenAPI {
     surceFiles: SourceFile[]
     typeAliases: TypeAliasDeclaration[]
     interfaces: InterfaceDeclaration[]
+    authorizeDecorator: Set<string> = new Set()
     openapi: OpenAPIV3.Document = {
         info: {
             version: '1.0.0',
@@ -46,6 +47,8 @@ class AST2OpenAPI {
         this.interfaces = interfaces
         sourceFile.forEach((f) => typeAliases.push(...f.getTypeAliases()))
         sourceFile.forEach((f) => interfaces.push(...f.getInterfaces()))
+
+        this.authorizeDecorator.add(Authorize.name)
     }
     /**
      * 添加安全模式
@@ -58,6 +61,16 @@ class AST2OpenAPI {
         }
 
         securitySchemes[authorizationScheme] = securitySchemeObject
+
+        return this
+    }
+    /**
+     * 添加授权装饰器名称
+     * @param authorizeDecoratorName
+     * @returns
+     */
+    addAuthorizeDecoratorName(authorizeDecoratorName: string): AST2OpenAPI {
+        this.authorizeDecorator.add(authorizeDecoratorName)
 
         return this
     }
@@ -95,7 +108,14 @@ class AST2OpenAPI {
         }
 
         for (const method of cls.getMethods()) {
-            const authorizeDecorator = method.getDecorator(Authorize.name)
+            let isAuthorizeDecorator = false
+            for (const authorizeDecoratorName of this.authorizeDecorator) {
+                // 如果有鉴权装饰器时
+                if (method.getDecorator(authorizeDecoratorName)) {
+                    isAuthorizeDecorator = true
+                    break
+                }
+            }
             // const methodName = method.getName()
             const jsdoc = this.#getJsDocs(method)
             for (const methodDecorator of method.getDecorators()) {
@@ -110,7 +130,7 @@ class AST2OpenAPI {
                     parameters: [],
                     description: this.#parseMethodDescription(jsdoc),
                     responses: this.#parseResponses(method),
-                    security: authorizeDecorator ? [security] : [],
+                    security: isAuthorizeDecorator ? [security] : [],
                 }
                 // 解析参数
                 for (const parameter of method.getParameters()) {
