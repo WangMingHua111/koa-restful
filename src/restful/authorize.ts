@@ -47,6 +47,7 @@ export function Authorize(authenticationSchemes?: string | string[]): MethodDeco
  * @param authenticationScheme 身份认证方案名称
  * @param authorization 认证方式
  */
-export function AddAuthentication(authenticationScheme: string, authorization: IAuthorization) {
+export function AddAuthentication<TAuthorization extends IAuthorization>(authenticationScheme: string, authorization: TAuthorization) {
     container.set(authenticationScheme, authorization)
+    return authorization
 }
