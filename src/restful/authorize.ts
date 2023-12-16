@@ -29,8 +29,8 @@ export function Authorize(authenticationSchemes?: string | string[]): MethodDeco
             // 遍历执行认证方案
             for (const scheme of schemes) {
                 if (!container.has(scheme)) throw new Error(`无效的认证方案:${scheme}`)
-                const { hook } = container.get(scheme) as IAuthorization
-                const success = await hook(ctx)
+                const authorization = container.get(scheme) as IAuthorization
+                const success = await authorization.hook.bind(authorization)(ctx)
                 if (success) return // 身份认证通过
             }
             ctx.response.status = 401 // 所有身份认证方式均未通过
