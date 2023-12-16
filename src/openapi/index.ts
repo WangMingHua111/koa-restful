@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { OpenAPIV3 } from 'openapi-types'
 import { ClassDeclaration, Decorator, InterfaceDeclaration, JSDoc, JSDocParameterTag, JSDocUnknownTag, JSDocableNode, MethodDeclaration, Project, SourceFile, Symbol, Type, TypeAliasDeclaration, ts } from 'ts-morph'
-import { Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpOptions, HttpPatch, HttpPost, HttpPut } from '../restful'
+import { Authorize, Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpOptions, HttpPatch, HttpPost, HttpPut } from '../restful'
 import { DefaultControllerOptions, join } from '../utils/shared'
 
 /**
@@ -34,6 +34,7 @@ class AST2OpenAPI {
         paths: {},
         components: {
             schemas: {},
+            securitySchemes: {},
         },
     }
     constructor(sourceFile: SourceFile[], info?: Partial<OpenAPIV3.InfoObject>) {
@@ -45,6 +46,20 @@ class AST2OpenAPI {
         this.interfaces = interfaces
         sourceFile.forEach((f) => typeAliases.push(...f.getTypeAliases()))
         sourceFile.forEach((f) => interfaces.push(...f.getInterfaces()))
+    }
+    /**
+     * 添加安全模式
+     * @param authorizationScheme 授权模式名称
+     * @param securitySchemeObject
+     */
+    addSecurityScheme(authorizationScheme: string, securitySchemeObject: OpenAPIV3.SecuritySchemeObject) {
+        const securitySchemes = this.openapi.components?.securitySchemes as {
+            [key: string]: OpenAPIV3.SecuritySchemeObject | OpenAPIV3.ReferenceObject
+        }
+
+        securitySchemes[authorizationScheme] = securitySchemeObject
+
+        return this
     }
     /**
      * 解析openapi json
@@ -64,7 +79,11 @@ class AST2OpenAPI {
      */
     #parseController(cls: ClassDeclaration) {
         // const controllerDecorator = cls.getDecorator(Controller.name) as Decorator
-
+        const securitySchemes = this.openapi.components?.securitySchemes || {}
+        const security = Object.keys(securitySchemes).reduce((t, key) => {
+            t[key] = []
+            return t
+        }, {}) as OpenAPIV3.SecurityRequirementObject
         const methodMapping = {
             [HttpGet.name]: 'get',
             [HttpHead.name]: 'head',
@@ -76,7 +95,8 @@ class AST2OpenAPI {
         }
 
         for (const method of cls.getMethods()) {
-            const methodName = method.getName()
+            const authorizeDecorator = method.getDecorator(Authorize.name)
+            // const methodName = method.getName()
             const jsdoc = this.#getJsDocs(method)
             for (const methodDecorator of method.getDecorators()) {
                 const methodDecoratorName = methodDecorator.getName()
@@ -90,6 +110,7 @@ class AST2OpenAPI {
                     parameters: [],
                     description: this.#parseMethodDescription(jsdoc),
                     responses: this.#parseResponses(method),
+                    security: authorizeDecorator ? [security] : [],
                 }
                 // 解析参数
                 for (const parameter of method.getParameters()) {
