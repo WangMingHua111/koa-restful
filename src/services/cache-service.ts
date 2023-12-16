@@ -208,4 +208,4 @@ class MemoryCacheService extends CacheService {
     }
 }
 
-export { CacheService, ICacheService, MemoryCacheService }
+export { CacheService, ICacheService, MemoryCacheService, MemoryCacheServiceOptions }
