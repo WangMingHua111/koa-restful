@@ -137,7 +137,7 @@ export class HttpError extends Error {
      * @param message 错误消息
      * @param status 状态码，默认值400
      */
-    constructor(message: string, status: number = 400) {
+    constructor(message: string | any, status: number = 400) {
         super()
         this.message = message
         this.status = status
