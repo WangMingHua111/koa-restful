@@ -183,14 +183,14 @@ class AST2OpenAPI {
         const routePrefixDecorator = cls.getDecorator(RoutePrefix.name)
         const metName = met.getName()
         const route = this.#parseFirstParameter(controllerDecorator)
-        const route2 = this.#parseFirstParameter(dec).replace(/:(\w+)/g, '{$1}')
+        const route2 = this.#parseFirstParameter(dec)?.replace(/:(\w+)/g, '{$1}')
         // 默认路由前缀
         let routePrefix = DefaultControllerOptions.defaultRoutePrefix
         // 存在路由前缀时，不使用默认路由前缀
         if (routePrefixDecorator) {
-            routePrefix = this.#parseFirstParameter(routePrefixDecorator)
+            routePrefix = this.#parseFirstParameter(routePrefixDecorator) as string
         }
-        return join(routePrefix, route || (cls.getName() || '').replace(/Controller$/i, ''), route2 || metName)
+        return join(routePrefix, route ?? (cls.getName() || '').replace(/Controller$/i, ''), route2 ?? metName)
     }
     /**
      * 读取装饰器第一个参数，示例：@Controller(`get2`) 读取 get2
@@ -199,30 +199,14 @@ class AST2OpenAPI {
      */
     #parseFirstParameter(decorator: Decorator) {
         const args = decorator.getArguments() // 获取装饰器参数，第一个参数
+        debugger
         // @Controller('route') 读取 装饰器路由参数
         if (args.length > 0) {
             const controllerRoute = args[0].getText() // 获取装饰器参数的文本值，包括引号
             const cleanedControllerRoute = controllerRoute.replace(/['"`]/g, '') // 去除装饰器参数的引号
             return cleanedControllerRoute
         } else {
-            return ''
-        }
-    }
-
-    /**
-     * 读取装饰器第一个参数，示例：@Controller(`get2`) 读取 get2
-     * @param decorator
-     * @returns
-     */
-    #parseIndexParameter(decorator: Decorator, index: number, replaceQuot = true) {
-        const args = decorator.getArguments() // 获取装饰器参数，第一个参数
-        // @Controller('route') 读取 装饰器路由参数
-        if (args.length > index) {
-            const controllerRoute = args[index].getText() // 获取装饰器参数的文本值，包括引号
-            const cleanedControllerRoute = replaceQuot ? controllerRoute.replace(/['"`]/g, '') : controllerRoute // 去除装饰器参数的引号
-            return cleanedControllerRoute
-        } else {
-            return ''
+            return undefined
         }
     }
 
