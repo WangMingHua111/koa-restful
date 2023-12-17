@@ -36,7 +36,7 @@ Koa Restful 是一个基于 Koa 框架的 Restful Web API 插件开源库，使�
     <a href="https://wangminghua111.github.io/koa-restful/"><strong>探索本项目的文档 »</strong></a>
     <br />
     <br />
-    <a href="https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13">查看Demo</a>
+    <a href="https://codesandbox.io/p/github/WangMingHua111/koa-restful-quick-start/master">查看Demo/在线测试</a>
     ·
     <a href="https://github.com/wangminghua111/koa-restful/issues">报告Bug</a>
     ·
@@ -95,17 +95,19 @@ npm install reflect-metadata koa @wangminghua/koa-restful typescript
 npx tsc --init
 ```
 
-#### 执行
+#### 工程模板（快速启动器）
 
-> 请参照该仓库，也可以按需求自主集成
-
-> [src-example/simple.ts](src-example/simple.ts)
+[koa-restful-quick-start](https://github.com/WangMingHua111/koa-restful-quick-start)
 
 #### 在线测试
 
-传送门 [koa-restful-demo 在线测试](https://codesandbox.io/p/sandbox/koa-restful-demo-kz4pl8?embed=1&file=%2Fsrc%2Findex.ts%3A20%2C13)
+传送门 [koa-restful-quick-start 在线测试](https://codesandbox.io/p/github/WangMingHua111/koa-restful-quick-start/master)
 
-![传送门](https://github.com/wangminghua111/koa-restful/raw/master/images/codesandbox.io.gif)
+![传送门](https://github.com/WangMingHua111/koa-restful-quick-start/blob/master/image/codesandbox.png)
+
+### QQ 交流群
+
+![QQ交流群](https://github.com/wangminghua111/koa-restful/raw/master/images/QQ-KoaRestful.png)
 
 ## 示例代码
 
