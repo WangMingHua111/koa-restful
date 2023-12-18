@@ -199,7 +199,6 @@ class AST2OpenAPI {
      */
     #parseFirstParameter(decorator: Decorator) {
         const args = decorator.getArguments() // 获取装饰器参数，第一个参数
-        debugger
         // @Controller('route') 读取 装饰器路由参数
         if (args.length > 0) {
             const controllerRoute = args[0].getText() // 获取装饰器参数的文本值，包括引号
@@ -226,6 +225,15 @@ class AST2OpenAPI {
         const existing = this.typeAliases.some((p) => p.getName() === typeText)
         const existing2 = this.interfaces.some((p) => p.getName() === typeText)
         return existing || existing2
+    }
+    /**
+     * 获取存在的类型
+     */
+    #getExistType(typeText: string) {
+        const existing = this.typeAliases.find((p) => p.getName() === typeText)?.getType()
+        if (existing) return existing
+        const existing2 = this.interfaces.find((p) => p.getName() === typeText)?.getType()
+        if (existing2) return existing2
     }
     /**
      * 解析方法注释
@@ -309,7 +317,21 @@ class AST2OpenAPI {
         for (const property of properties) {
             var valueDeclarator = property.getValueDeclaration()
             if (!valueDeclarator) continue
-            schema.properties[property.getName()] = this.#parseSchemaObject(valueDeclarator.getType(), this.#getJsDocs(valueDeclarator as unknown as JSDocableNode))
+            // 泛型类型
+            let genericsType: Type | undefined = undefined
+            // 如果当前属性是泛型参数
+            if (valueDeclarator.getType().isTypeParameter()) {
+                const typeStr = this.#getText(type)
+                // debugger
+                // console.log('typeStr>>>', typeStr)
+                const genericsName = new RegExp(`${property.getName()}: ?(\\w+);`, 'g').exec(typeStr)?.[1]
+                if (genericsName) {
+                    genericsType = this.#getGenericsType(genericsName)
+                    genericsType && this.#createSchemaObject(genericsType)
+                }
+            }
+
+            schema.properties[property.getName()] = this.#parseSchemaObject(genericsType || valueDeclarator.getType(), this.#getJsDocs(valueDeclarator as unknown as JSDocableNode))
         }
         return schema
     }
@@ -449,6 +471,14 @@ class AST2OpenAPI {
     }
     #getJsDocs(node?: JSDocableNode): JSDoc[] {
         return node?.getJsDocs?.() || []
+    }
+    #getGenericsType(genericsName: string): Type | undefined {
+        let name = genericsName
+        // 泛型类型不存在时，创建泛型
+        if (!this.#isExistType(name)) {
+        }
+        // console.log('genericsName>>', genericsName)
+        return this.#getExistType(name)
     }
 }
 
