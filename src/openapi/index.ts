@@ -19,7 +19,7 @@ function checksum(inputString: string) {
     // 从哈希结果中提取前 8 位作为校验码
     const eightDigitChecksum = checksum.slice(0, 8)
 
-    return eightDigitChecksum
+    return `T_${eightDigitChecksum}`
 }
 class AST2OpenAPI {
     surceFiles: SourceFile[]
@@ -39,6 +39,7 @@ class AST2OpenAPI {
         },
     }
     constructor(sourceFile: SourceFile[], info?: Partial<OpenAPIV3.InfoObject>) {
+        const project = new Project()
         Object.assign(this.openapi.info, info)
         const typeAliases: TypeAliasDeclaration[] = []
         const interfaces: InterfaceDeclaration[] = []
@@ -323,11 +324,14 @@ class AST2OpenAPI {
             if (valueDeclarator.getType().isTypeParameter()) {
                 const typeStr = this.#getText(type)
                 // debugger
-                // console.log('typeStr>>>', typeStr)
+                console.log('typeStr>>>', typeStr)
                 const genericsName = new RegExp(`${property.getName()}: ?(\\w+);`, 'g').exec(typeStr)?.[1]
                 if (genericsName) {
                     genericsType = this.#getGenericsType(genericsName)
                     genericsType && this.#createSchemaObject(genericsType)
+                } else {
+                    debugger
+                    genericsType = this.#getGenericsType(typeStr)
                 }
             }
 
@@ -476,9 +480,16 @@ class AST2OpenAPI {
         let name = genericsName
         // 泛型类型不存在时，创建泛型
         if (!this.#isExistType(name)) {
+            name = checksum(genericsName)
+            const nType = this.surceFiles[0].addTypeAlias({
+                name,
+                type: `${genericsName}`,
+            })
+            this.typeAliases.push(nType)
         }
-        // console.log('genericsName>>', genericsName)
-        return this.#getExistType(name)
+        debugger
+        const rType = this.#getExistType(name)
+        return rType
     }
 }
 
