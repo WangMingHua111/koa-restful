@@ -323,15 +323,17 @@ class AST2OpenAPI {
             // 如果当前属性是泛型参数
             if (valueDeclarator.getType().isTypeParameter()) {
                 const typeStr = this.#getText(type)
-                // debugger
-                console.log('typeStr>>>', typeStr)
+                // console.log('typeStr>>>', typeStr)
                 const genericsName = new RegExp(`${property.getName()}: ?(\\w+);`, 'g').exec(typeStr)?.[1]
                 if (genericsName) {
                     genericsType = this.#getGenericsType(genericsName)
                     genericsType && this.#createSchemaObject(genericsType)
                 } else {
-                    debugger
                     genericsType = this.#getGenericsType(typeStr)
+                        ?.getProperties()
+                        .find((p) => p.getName() === property.getName())
+                        ?.getValueDeclaration()
+                        ?.getType()
                 }
             }
 
@@ -487,7 +489,6 @@ class AST2OpenAPI {
             })
             this.typeAliases.push(nType)
         }
-        debugger
         const rType = this.#getExistType(name)
         return rType
     }
@@ -497,6 +498,7 @@ class AST2OpenAPI {
  * Adds source files based on file globs.
  * @param fileGlobs - File glob or globs to add files based on.
  * @returns AST2OpenAPI
+ * @description `注意目前不能很好的处理泛型返回,真的尽力了，尽量不要出现 function (): Result<Test> {...}`
  */
 export function CreateAST2OpenAPI(fileGlobs: string | ReadonlyArray<string>, info?: Partial<OpenAPIV3.InfoObject>): AST2OpenAPI {
     const project = new Project()
