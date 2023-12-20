@@ -20,7 +20,8 @@ export type ControllerOptions =
            */
           lifecycle?: Lifecycle
           /**
-           * 路由前缀，设置该选项时使用指定路由前缀，可以设置为空字符串''，代表移除路由前缀
+           * ~~路由前缀，设置该选项时使用指定路由前缀，可以设置为空字符串''，代表移除路由前缀~~
+           * @deprecated
            */
           prefix?: string
           /**
@@ -44,7 +45,7 @@ export function Controller(route?: string, lifecycle?: ControllerOptions): Class
     }
     const options = Object.assign(temp, typeof lifecycle === 'string' ? { lifecycle } : typeof lifecycle === 'object' ? { ...lifecycle } : undefined)
     return function (target: Function) {
-        Reflect.defineMetadata(KEY_ROUTE, route || target.name.replace(/Controller$/i, ''), target)
+        Reflect.defineMetadata(KEY_ROUTE, route ?? target.name.replace(/Controller$/i, ''), target)
         if (!isNullOrUndefined(options.prefix)) {
             Reflect.defineMetadata(KEY_ROUTE_PREFIX, options.prefix, target)
         }
@@ -59,6 +60,16 @@ export function Controller(route?: string, lifecycle?: ControllerOptions): Class
                 break
         }
         options.enabled && controllers.add(service)
+    }
+}
+
+/**
+ * 路由前缀（装饰器）
+ * @param prefix
+ */
+export function RoutePrefix(prefix: string): ClassDecorator {
+    return function (target: Function) {
+        Reflect.defineMetadata(KEY_ROUTE_PREFIX, prefix, target)
     }
 }
 

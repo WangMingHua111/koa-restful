@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { OpenAPIV3 } from 'openapi-types'
 import { ClassDeclaration, Decorator, InterfaceDeclaration, JSDoc, JSDocParameterTag, JSDocUnknownTag, JSDocableNode, MethodDeclaration, Project, SourceFile, Symbol, Type, TypeAliasDeclaration, ts } from 'ts-morph'
-import { Authorize, Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpOptions, HttpPatch, HttpPost, HttpPut } from '../restful'
+import { Authorize, Controller, FromBody, FromHeader, FromQuery, FromRoute, HttpDelete, HttpGet, HttpHead, HttpOptions, HttpPatch, HttpPost, HttpPut, RoutePrefix } from '../restful'
 import { DefaultControllerOptions, join } from '../utils/shared'
 
 /**
@@ -19,7 +19,7 @@ function checksum(inputString: string) {
     // 从哈希结果中提取前 8 位作为校验码
     const eightDigitChecksum = checksum.slice(0, 8)
 
-    return eightDigitChecksum
+    return `T_${eightDigitChecksum}`
 }
 class AST2OpenAPI {
     surceFiles: SourceFile[]
@@ -39,6 +39,7 @@ class AST2OpenAPI {
         },
     }
     constructor(sourceFile: SourceFile[], info?: Partial<OpenAPIV3.InfoObject>) {
+        const project = new Project()
         Object.assign(this.openapi.info, info)
         const typeAliases: TypeAliasDeclaration[] = []
         const interfaces: InterfaceDeclaration[] = []
@@ -180,11 +181,17 @@ class AST2OpenAPI {
 
     #parseRoutePath(cls: ClassDeclaration, met: MethodDeclaration, dec: Decorator) {
         const controllerDecorator = cls.getDecorator(Controller.name) as Decorator
+        const routePrefixDecorator = cls.getDecorator(RoutePrefix.name)
         const metName = met.getName()
         const route = this.#parseFirstParameter(controllerDecorator)
-        const route2 = this.#parseFirstParameter(dec).replace(/:(\w+)/g, '{$1}')
-
-        return join(DefaultControllerOptions.defaultRoutePrefix, route || (cls.getName() || '').replace(/Controller$/i, ''), route2 || metName)
+        const route2 = this.#parseFirstParameter(dec)?.replace(/:(\w+)/g, '{$1}')
+        // 默认路由前缀
+        let routePrefix = DefaultControllerOptions.defaultRoutePrefix
+        // 存在路由前缀时，不使用默认路由前缀
+        if (routePrefixDecorator) {
+            routePrefix = this.#parseFirstParameter(routePrefixDecorator) as string
+        }
+        return join(routePrefix, route ?? (cls.getName() || '').replace(/Controller$/i, ''), route2 ?? metName)
     }
     /**
      * 读取装饰器第一个参数，示例：@Controller(`get2`) 读取 get2
@@ -199,7 +206,7 @@ class AST2OpenAPI {
             const cleanedControllerRoute = controllerRoute.replace(/['"`]/g, '') // 去除装饰器参数的引号
             return cleanedControllerRoute
         } else {
-            return ''
+            return undefined
         }
     }
 
@@ -219,6 +226,15 @@ class AST2OpenAPI {
         const existing = this.typeAliases.some((p) => p.getName() === typeText)
         const existing2 = this.interfaces.some((p) => p.getName() === typeText)
         return existing || existing2
+    }
+    /**
+     * 获取存在的类型
+     */
+    #getExistType(typeText: string) {
+        const existing = this.typeAliases.find((p) => p.getName() === typeText)?.getType()
+        if (existing) return existing
+        const existing2 = this.interfaces.find((p) => p.getName() === typeText)?.getType()
+        if (existing2) return existing2
     }
     /**
      * 解析方法注释
@@ -302,7 +318,26 @@ class AST2OpenAPI {
         for (const property of properties) {
             var valueDeclarator = property.getValueDeclaration()
             if (!valueDeclarator) continue
-            schema.properties[property.getName()] = this.#parseSchemaObject(valueDeclarator.getType(), this.#getJsDocs(valueDeclarator as unknown as JSDocableNode))
+            // 泛型类型
+            let genericsType: Type | undefined = undefined
+            // 如果当前属性是泛型参数
+            if (valueDeclarator.getType().isTypeParameter()) {
+                const typeStr = this.#getText(type)
+                // console.log('typeStr>>>', typeStr)
+                const genericsName = new RegExp(`${property.getName()}: ?(\\w+);`, 'g').exec(typeStr)?.[1]
+                if (genericsName) {
+                    genericsType = this.#getGenericsType(genericsName)
+                    genericsType && this.#createSchemaObject(genericsType)
+                } else {
+                    genericsType = this.#getGenericsType(typeStr)
+                        ?.getProperties()
+                        .find((p) => p.getName() === property.getName())
+                        ?.getValueDeclaration()
+                        ?.getType()
+                }
+            }
+
+            schema.properties[property.getName()] = this.#parseSchemaObject(genericsType || valueDeclarator.getType(), this.#getJsDocs(valueDeclarator as unknown as JSDocableNode))
         }
         return schema
     }
@@ -443,12 +478,27 @@ class AST2OpenAPI {
     #getJsDocs(node?: JSDocableNode): JSDoc[] {
         return node?.getJsDocs?.() || []
     }
+    #getGenericsType(genericsName: string): Type | undefined {
+        let name = genericsName
+        // 泛型类型不存在时，创建泛型
+        if (!this.#isExistType(name)) {
+            name = checksum(genericsName)
+            const nType = this.surceFiles[0].addTypeAlias({
+                name,
+                type: `${genericsName}`,
+            })
+            this.typeAliases.push(nType)
+        }
+        const rType = this.#getExistType(name)
+        return rType
+    }
 }
 
 /**
  * Adds source files based on file globs.
  * @param fileGlobs - File glob or globs to add files based on.
  * @returns AST2OpenAPI
+ * @description `注意目前不能很好的处理泛型返回,真的尽力了，尽量不要出现 function (): Result<Test> {...}`
  */
 export function CreateAST2OpenAPI(fileGlobs: string | ReadonlyArray<string>, info?: Partial<OpenAPIV3.InfoObject>): AST2OpenAPI {
     const project = new Project()
