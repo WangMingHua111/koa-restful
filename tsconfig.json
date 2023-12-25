@@ -9,7 +9,7 @@
         "declarationMap": true,
         "sourceMap": true,
         "outDir": "./dist",
-        "declarationDir": "./dist/types",
+        "declarationDir": "./dist",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "strict": true,
