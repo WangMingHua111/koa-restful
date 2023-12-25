@@ -3,6 +3,6 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "outDir": "./extra/",
-        "declarationDir": "./extra/types"
+        "declarationDir": "./extra/"
     }
 }
