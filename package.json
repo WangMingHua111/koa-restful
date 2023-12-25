@@ -7,7 +7,8 @@
     "scripts": {
         "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
         "build-example": "rimraf -rf ./dist-example && npx tsc -p tsconfig.example.json",
-        "build-all": "npm run build && npm run build-example",
+        "build-extra": "rimraf -rf ./extra && npx tsc -p tsconfig.extra.json",
+        "build-all": "npm run build && npm run build-example && npm run build-extra",
         "run-example": "node ./dist-example/simple.js",
         "run-example-ts": "ts-node ./src-example/simple.ts",
         "run-di": "node ./dist-example/di.js",
@@ -34,19 +35,21 @@
         "@koa/router": "^12.0.1",
         "@types/koa": "^2.13.11",
         "@wangminghua/di": "^0.0.2",
+        "jsonwebtoken": "^9.0.2",
         "koa": "^2.14.2",
         "koa-compose": "^4.1.0",
         "lodash-es": "^4.17.21",
+        "openapi-types": "^12.1.3",
         "reflect-metadata": "^0.1.13",
-        "typescript": "^5.2.2",
         "ts-morph": "^21.0.1",
-        "openapi-types": "^12.1.3"
+        "typescript": "^5.2.2"
     },
     "devDependencies": {
         "@types/koa__router": "^12.0.4",
         "@types/koa-compose": "^3.2.8",
         "@wangminghua/koa-restful": "file:./",
         "axios": "^1.5.0",
+        "chalk": "^4.1.2",
         "rimraf": "^5.0.5",
         "ts-node": "^10.9.1",
         "vitepress": "^1.0.0-rc.30"
