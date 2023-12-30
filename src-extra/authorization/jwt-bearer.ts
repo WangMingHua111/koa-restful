@@ -66,8 +66,7 @@ export class JwtBearerAuthorization implements IAuthorization {
         }
     }
     async hook(ctx: Context): Promise<boolean> {
-        const { authorityHeader } = this.options
-        const token = ctx.get(authorityHeader)
+        const token = this.token(ctx)
         if (!token) return false
         try {
             this.verify(token)
@@ -75,6 +74,17 @@ export class JwtBearerAuthorization implements IAuthorization {
         } catch (err) {
             return false
         }
+    }
+    token(ctx: Context) {
+        const { authorityHeader } = this.options
+        const token = ctx.get(authorityHeader)
+        return token
+    }
+    async claims(ctx: Context): Promise<Record<string, string | number> | undefined> {
+        const token = this.token(ctx)
+        if (!token) return
+        const payload = jwt.decode(token)
+        return payload
     }
     verify(token: string) {
         const { secret, verifyOptions } = this.options
