@@ -2,6 +2,15 @@ import { Lifecycle } from '@wangminghua/di'
 import { Context, Next } from 'koa'
 
 /**
+ * Global Before Hook KEY
+ */
+export const KEY_GLOBAL_BEFORE_HOOK = '__GLOBAL_BEFORE_HOOK__'
+/**
+ * Global After Hook KEY
+ */
+export const KEY_GLOBAL_AFTER_HOOK = '__GLOBAL_AFTER_HOOK__'
+
+/**
  * Before Hook KEY
  */
 export const KEY_BEFORE_HOOK = '__BEFORE_HOOK__'

@@ -22,14 +22,14 @@ type KoaRestfulOptions = {
     logs?: boolean
 }
 
-function parseBeforeHooks(cls: Function, propertyKey: string): Array<Hook> {
+function parseBeforeHooks(cls: Function, propertyKey: string = '*'): Array<Hook> {
     const metadataKey = `${KEY_BEFORE_HOOK}${parsePropertyKey(propertyKey)}`
     const hooks = Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined
 
     return hooks || []
 }
 
-function parseAfterHooks(cls: Function, propertyKey: string): Array<Hook> {
+function parseAfterHooks(cls: Function, propertyKey: string = '*'): Array<Hook> {
     const metadataKey = `${KEY_AFTER_HOOK}${parsePropertyKey(propertyKey)}`
     const hooks = Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined
 
@@ -88,6 +88,7 @@ async function delayInit(options?: KoaRestfulOptions) {
                     //#endregion
 
                     try {
+                        debugger
                         //#region 调用前置钩子函数
                         const beforeHooks = parseBeforeHooks(controller.cls, propertyKey)
                         for (const hook of beforeHooks) {

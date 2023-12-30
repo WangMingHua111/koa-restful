@@ -25,12 +25,12 @@ type AspectOptions = {
 /**
  * 切面函数
  */
-export function Aspect(hook: Hook, options?: AspectOptions): MethodDecorator {
+export function Aspect(hook: Hook, options?: AspectOptions): ClassDecorator & MethodDecorator {
     const { hookType, metadataHook } = {
         hookType: KEY_BEFORE_HOOK,
         ...options,
     } as AspectOptions
-    return function (target: Object, propertyKey: string | symbol): void {
+    return function (target: Object | Function, propertyKey: string | symbol = '*'): void {
         // 用于定义元数据
         metadataHook?.(target, propertyKey)
 

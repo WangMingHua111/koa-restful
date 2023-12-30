@@ -13,6 +13,7 @@
         "run-di": "node ./dist-example/di.js",
         "run-di-ts": "ts-node ./src-example/di.ts",
         "run-openapi-ts": "ts-node ./src-example/openapi.ts",
+        "run-extra-ts": "ts-node ./src-example/extra.ts",
         "docs:build": "vitepress build docs",
         "docs:serve": "vitepress serve docs"
     },
