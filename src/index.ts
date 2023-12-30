@@ -1,19 +1,19 @@
 import 'reflect-metadata'
 
 import Router from '@koa/router'
+import { ResolveDependencyFromUniqueId } from '@wangminghua/di'
 import { Context, HttpError as KoaHttpError, Next } from 'koa'
 import compose from 'koa-compose'
 
 import { getControllers } from './restful'
-import { Hook } from './utils/aspect'
-import { DefaultControllerOptions, HttpError, KEY_AFTER_HOOK, KEY_BEFORE_HOOK, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod, isNullOrUndefined, join, parsePropertyKey } from './utils/shared'
+import { DefaultControllerOptions, Hook, HttpError, KEY_AFTER_HOOK, KEY_BEFORE_HOOK, KEY_GLOBAL_AFTER_HOOK, KEY_GLOBAL_BEFORE_HOOK, KEY_METHOD, KEY_PARAMETER, KEY_ROUTE, KEY_ROUTE_PREFIX, ParameterConverterFn, RecordMethods, RequestMethod, isNullOrUndefined, join, parsePropertyKey } from './utils/shared'
 
 export * from '@wangminghua/di'
 export * from './openapi'
 export * from './restful'
 export * from './services/cache-service'
 export * from './services/logger-service'
-export { DefaultControllerOptions, HttpError, isNullOrUndefined, join } from './utils/shared'
+export * from './utils'
 
 type KoaRestfulOptions = {
     /**
@@ -22,18 +22,36 @@ type KoaRestfulOptions = {
     logs?: boolean
 }
 
-function parseBeforeHooks(cls: Function, propertyKey: string = '*'): Array<Hook> {
-    const metadataKey = `${KEY_BEFORE_HOOK}${parsePropertyKey(propertyKey)}`
-    const hooks = Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined
-
-    return hooks || []
+function parseGlobalBeforeHooks(): Array<Hook> {
+    return ResolveDependencyFromUniqueId<Hook[]>(KEY_GLOBAL_BEFORE_HOOK) || []
 }
 
-function parseAfterHooks(cls: Function, propertyKey: string = '*'): Array<Hook> {
-    const metadataKey = `${KEY_AFTER_HOOK}${parsePropertyKey(propertyKey)}`
-    const hooks = Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined
+function parseGlobalAfterHooks(): Array<Hook> {
+    return ResolveDependencyFromUniqueId<Hook[]>(KEY_GLOBAL_AFTER_HOOK) || []
+}
 
-    return hooks || []
+function parseBeforeHooks(cls: Function, propertyKey: string): Array<Hook> {
+    // 类上面的装饰器
+    const classMetadataKey = `${KEY_BEFORE_HOOK}*`
+    const classHooks = (Reflect.getMetadata(classMetadataKey, cls) as Array<Hook> | undefined) || []
+
+    // 方法上面的装饰器
+    const metadataKey = `${KEY_BEFORE_HOOK}${parsePropertyKey(propertyKey)}`
+    const hooks = (Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined) || []
+
+    return classHooks.concat(hooks)
+}
+
+function parseAfterHooks(cls: Function, propertyKey: string): Array<Hook> {
+    // 类上面的装饰器
+    const classMetadataKey = `${KEY_AFTER_HOOK}*`
+    const classHooks = (Reflect.getMetadata(classMetadataKey, cls) as Array<Hook> | undefined) || []
+
+    // 方法上面的装饰器
+    const metadataKey = `${KEY_AFTER_HOOK}${parsePropertyKey(propertyKey)}`
+    const hooks = (Reflect.getMetadata(metadataKey, cls) as Array<Hook> | undefined) || []
+
+    return classHooks.concat(hooks)
 }
 
 /**
@@ -88,7 +106,13 @@ async function delayInit(options?: KoaRestfulOptions) {
                     //#endregion
 
                     try {
-                        debugger
+                        //#region 调用全局前置钩子函数
+                        const globalbBeforeHooks = parseGlobalBeforeHooks()
+                        for (const hook of globalbBeforeHooks) {
+                            await hook(ctx)
+                        }
+                        //#endregion
+
                         //#region 调用前置钩子函数
                         const beforeHooks = parseBeforeHooks(controller.cls, propertyKey)
                         for (const hook of beforeHooks) {
@@ -106,6 +130,13 @@ async function delayInit(options?: KoaRestfulOptions) {
                         //#region 调用后置钩子函数
                         const afterHooks = parseAfterHooks(controller.cls, propertyKey)
                         for (const hook of afterHooks) {
+                            await hook(ctx)
+                        }
+                        //#endregion
+
+                        //#region 调用全局后置钩子函数
+                        const globalbAfterHooks = parseGlobalAfterHooks()
+                        for (const hook of globalbAfterHooks) {
                             await hook(ctx)
                         }
                         //#endregion

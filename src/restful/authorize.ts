@@ -47,7 +47,7 @@ export function Authorize(authenticationSchemes?: string | string[]): ClassDecor
             return Promise.reject()
         },
         {
-            hookType: '__BEFORE_HOOK__',
+            hookType: 'beforeHook',
         }
     )
 }

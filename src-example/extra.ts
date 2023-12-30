@@ -1,6 +1,24 @@
+import { AddGlobalHook, Authorize, Controller, FromHeader, FromQuery, FromRoute, HttpGet } from '@wangminghua/koa-restful'
+import { AddCookieAuthentication, AddSwaggerUI, bootstrap } from '@wangminghua/koa-restful/extra'
 import { Context } from 'koa'
-import { Authorize, Controller, FromHeader, FromQuery, FromRoute, HttpGet } from '../src'
-import { AddCookieAuthentication, AddSwaggerUI, bootstrap } from '../src-extra'
+
+AddGlobalHook(
+    async () => {
+        console.log('__GLOBAL_BEFORE_HOOK__')
+    },
+    {
+        hookType: 'globalBeforeHook',
+    }
+)
+
+AddGlobalHook(
+    async (ctx) => {
+        console.log('__GLOBAL_AFTER_HOOK__', ctx.body)
+    },
+    {
+        hookType: 'globalAfterHook',
+    }
+)
 
 // 测试类型
 type TestModel = { name: string; value: string }

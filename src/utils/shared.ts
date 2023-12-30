@@ -93,6 +93,24 @@ export function isNullOrUndefined(route: string | undefined | null) {
 }
 
 /**
+ * **Hook函数，执行顺序为：全局前置钩子 > 前置钩子 > 后置钩子 > 全局后置钩子**
+ */
+export type Hook = (ctx: Context) => Promise<void>
+
+/**
+ * **Hook类型，执行顺序为：全局前置钩子 > 前置钩子 > 后置钩子 > 全局后置钩子**
+ *
+ * 前置钩子=beforeHook
+ *
+ * 后置钩子=afterHook
+ *
+ * 全局前置钩子=globalBeforeHook
+ *
+ * 全局后置钩子=globalAfterHook
+ */
+export type HookType = 'beforeHook' | 'afterHook' | 'globalBeforeHook' | 'globalAfterHook'
+
+/**
  * 参数
  */
 export type TParam =
