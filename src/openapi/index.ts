@@ -33,13 +33,13 @@ class AST2OpenAPI {
         },
         openapi: '3.0.0',
         paths: {},
+        tags: [],
         components: {
             schemas: {},
             securitySchemes: {},
         },
     }
     constructor(sourceFile: SourceFile[], info?: Partial<OpenAPIV3.InfoObject>) {
-        const project = new Project()
         Object.assign(this.openapi.info, info)
         const typeAliases: TypeAliasDeclaration[] = []
         const interfaces: InterfaceDeclaration[] = []
@@ -93,6 +93,15 @@ class AST2OpenAPI {
      */
     #parseController(cls: ClassDeclaration) {
         // const controllerDecorator = cls.getDecorator(Controller.name) as Decorator
+        const clsJsDoc = this.#getJsDocs(cls)
+        if (clsJsDoc.length > 0) {
+            // 设置控制器注释
+            this.openapi.tags?.push({
+                name: cls.getName() as string,
+                description: this.#parseComment(clsJsDoc),
+            })
+        }
+
         const securitySchemes = this.openapi.components?.securitySchemes || {}
         const security = Object.keys(securitySchemes).reduce((t, key) => {
             t[key] = []

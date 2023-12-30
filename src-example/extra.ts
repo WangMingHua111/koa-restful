@@ -1,4 +1,4 @@
-import { AddGlobalHook, Authorize, Controller, FromHeader, FromQuery, FromRoute, HttpGet } from '@wangminghua/koa-restful'
+import { AddGlobalHook, Aspect, Authorize, Controller, FromHeader, FromQuery, FromRoute, HttpGet } from '@wangminghua/koa-restful'
 import { AddCookieAuthentication, AddSwaggerUI, bootstrap } from '@wangminghua/koa-restful/extra'
 import { Context } from 'koa'
 
@@ -32,6 +32,17 @@ class GetController {
      * 返回一个字符串
      * @returns
      */
+    @Aspect(async (ctx) => {
+        console.log('前置钩子 Aspect>>>', `${Date.now()} ${ctx.URL}`)
+    })
+    @Aspect(
+        async (ctx) => {
+            console.log('后置钩子 Aspect>>>', `${Date.now()} ${ctx.URL}`)
+        },
+        {
+            hookType: 'afterHook',
+        }
+    )
     @HttpGet()
     test1(): string {
         return `GetController test1 = ${new Date().toLocaleTimeString()}`
