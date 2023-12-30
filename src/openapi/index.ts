@@ -121,7 +121,7 @@ class AST2OpenAPI {
             let isAuthorizeDecorator = false
             for (const authorizeDecoratorName of this.authorizeDecorator) {
                 // 如果有鉴权装饰器时
-                if (method.getDecorator(authorizeDecoratorName)) {
+                if (cls.getDecorator(authorizeDecoratorName) || method.getDecorator(authorizeDecoratorName)) {
                     isAuthorizeDecorator = true
                     break
                 }
