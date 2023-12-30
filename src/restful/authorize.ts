@@ -1,8 +1,17 @@
+import { AddDependency, ResolveDependencyFromUniqueId } from '@wangminghua/di'
 import { Context } from 'koa'
 import { Aspect } from '../utils/aspect'
 import { isNullOrUndefined } from '../utils/shared'
 
-const container = new Map<string, IAuthorization>()
+const uniqueId = '__koa_authorize_container__'
+
+AddDependency(new Map<string, IAuthorization>(), { uniqueId })
+
+// 从DI中加载数据
+function getContainer() {
+    return ResolveDependencyFromUniqueId(uniqueId) as Map<string, IAuthorization>
+}
+
 /**
  * 认证方式
  */
@@ -19,9 +28,10 @@ export interface IAuthorization {
  * @returns
  * @description 请注意，如果输入的是认证方案集合，则集合中的任意方案均可通过认证后。
  */
-export function Authorize(authenticationSchemes?: string | string[]): MethodDecorator {
+export function Authorize(authenticationSchemes?: string | string[]): ClassDecorator & MethodDecorator {
     return Aspect(
         async (ctx: Context) => {
+            const container = getContainer()
             if (container.size === 0) throw new Error('没有任何身份验证方案')
 
             // 没有指定身份认证方案，使用默认的方案进行认证
@@ -37,7 +47,7 @@ export function Authorize(authenticationSchemes?: string | string[]): MethodDeco
             return Promise.reject()
         },
         {
-            hookType: '__BEFORE_HOOK__',
+            hookType: 'beforeHook',
         }
     )
 }
@@ -48,6 +58,7 @@ export function Authorize(authenticationSchemes?: string | string[]): MethodDeco
  * @param authorization 认证方式
  */
 export function AddAuthentication<TAuthorization extends IAuthorization>(authenticationScheme: string, authorization: TAuthorization) {
+    const container = getContainer()
     container.set(authenticationScheme, authorization)
     return authorization
 }

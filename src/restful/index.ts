@@ -1,12 +1,21 @@
-import { IScopeService, Lifecycle, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
+import { AddDependency, IScopeService, Lifecycle, ResolveDependencyFromUniqueId, SingletonScopeService, TransientScopeService } from '@wangminghua/di'
 import { DefaultControllerOptions, KEY_ROUTE, KEY_ROUTE_PREFIX, isNullOrUndefined } from '../utils/shared'
 
 export * from './authorize'
 export * from './from-type'
 export * from './request-method'
 
+const uniqueId = '__koa_restful_controllers__'
 // 控制器列表
-const controllers = new Set<IScopeService>()
+AddDependency(new Set<IScopeService>(), { uniqueId })
+
+/**
+ * 获取 Controller 控制器列表
+ */
+export function getControllers() {
+    const controllers = ResolveDependencyFromUniqueId(uniqueId) as Set<IScopeService>
+    return controllers
+}
 
 /**
  * 控制器选项
@@ -59,7 +68,7 @@ export function Controller(route?: string, lifecycle?: ControllerOptions): Class
                 service = new TransientScopeService(target)
                 break
         }
-        options.enabled && controllers.add(service)
+        options.enabled && getControllers().add(service)
     }
 }
 
@@ -81,11 +90,4 @@ export function RoutePrefix(prefix: string): ClassDecorator {
  */
 export function AddController(target: Function, route?: string, lifecycle?: ControllerOptions) {
     Controller(route, lifecycle)(target)
-}
-
-/**
- * 获取 Controller 控制器列表
- */
-export function getControllers() {
-    return controllers
 }
