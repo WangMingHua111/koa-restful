@@ -1,4 +1,4 @@
-import { HttpError } from '@wangminghua/koa-restful'
+import { HttpError, getAuthorizations } from '@wangminghua/koa-restful'
 import { Context } from 'koa'
 /**
  * 基础控制器，提供一些比较常用的基础方法
@@ -11,24 +11,46 @@ export abstract class BaseController {
         return (this as any).__ctx
     }
     /**
+     * 从认证方案中读取一个令牌
+     * @returns
+     */
+    readToken(): string | undefined {
+        const authorizations = getAuthorizations()
+        for (const [, authorization] of authorizations) {
+            const token = authorization.token(this.ctx)
+            if (token) return token
+        }
+    }
+    /**
+     * 从认证方案中读取验证主体特征
+     * @returns
+     */
+    async readClaims(): Promise<Record<string, string | number> | undefined> {
+        const authorizations = getAuthorizations()
+        for (const [, authorization] of authorizations) {
+            const claims = await authorization.claims(this.ctx)
+            if (claims) return claims
+        }
+    }
+    /**
      * 抛出自定义 401 HttpError
      * @param message
      */
-    bad(message?: any) {
+    bad(message: any = 'Bad Request') {
         throw new HttpError(message, 400)
     }
     /**
      * 抛出 403 HttpError
      * @param message
      */
-    forbidden(message?: any) {
+    forbidden(message: any = 'Forbidden') {
         throw new HttpError(message, 403)
     }
     /**
      * 抛出 401 HttpError
      * @param message
      */
-    unauthorized(message?: any) {
+    unauthorized(message: any = 'Unauthorized') {
         throw new HttpError(message, 401)
     }
     /**
@@ -36,7 +58,7 @@ export abstract class BaseController {
      * @param status http状态码
      * @param message
      */
-    custom(status: number, message?: any) {
+    custom(status: number, message: any = '') {
         throw new HttpError(message, status)
     }
     /**

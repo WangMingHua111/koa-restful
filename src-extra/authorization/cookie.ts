@@ -48,6 +48,7 @@ export class CookieAuthorization implements IAuthorization {
             ...options,
         }
     }
+
     /**
      * authorityHeader
      */
@@ -65,8 +66,7 @@ export class CookieAuthorization implements IAuthorization {
         }
     }
     async hook(ctx: Context): Promise<boolean> {
-        const { authorityHeader } = this.options
-        const token = ctx.cookies.get(authorityHeader)
+        const token = this.token(ctx)
         if (!token) return false
         try {
             this.verify(token)
@@ -75,6 +75,19 @@ export class CookieAuthorization implements IAuthorization {
             return false
         }
     }
+    token(ctx: Context) {
+        const { authorityHeader } = this.options
+        const token = ctx.cookies.get(authorityHeader)
+        return token
+    }
+
+    async claims(ctx: Context): Promise<Record<string, string | number> | undefined> {
+        const token = this.token(ctx)
+        if (!token) return
+        const payload = jwt.decode(token)
+        return payload
+    }
+
     verify(token: string) {
         const { secret, verifyOptions } = this.options
         jwt.verify(token, secret, { ...verifyOptions })
