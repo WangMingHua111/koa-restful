@@ -70,7 +70,7 @@ class OtherController {
     }
     // 返回修改过的TestModel /other/test2
     @HttpPost()
-    test2(@FromBody({}) body: TestModel): TestModel {
+    test2(@FromBody() body: TestModel): TestModel {
         body.name += '-back'
         body.value += '-back'
         return body
