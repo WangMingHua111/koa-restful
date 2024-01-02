@@ -33,12 +33,12 @@
     "author": "wangminghua",
     "license": "ISC",
     "dependencies": {
-        "@koa/bodyparser": "^5.0.0",
         "@koa/router": "^12.0.1",
         "@types/koa": "^2.13.11",
         "@wangminghua/di": "^0.0.2",
         "jsonwebtoken": "^9.0.2",
         "koa": "^2.14.2",
+        "koa-body": "^6.0.1",
         "koa-compose": "^4.1.0",
         "lodash-es": "^4.17.21",
         "openapi-types": "^12.1.3",

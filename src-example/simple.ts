@@ -70,7 +70,7 @@ class OtherController {
     }
     // 返回修改过的TestModel /other/test2
     @HttpPost()
-    test2(@FromBody() body: TestModel): TestModel {
+    test2(@FromBody({}) body: TestModel): TestModel {
         body.name += '-back'
         body.value += '-back'
         return body
@@ -85,6 +85,13 @@ class OtherController {
     @HttpPut()
     test3(): TestModel {
         return { name: 'n1', value: 'n2' }
+    }
+
+    // 获取上传的文件，需设置其 multipart = true
+    @HttpPost()
+    testFile(@FromBody({ multipart: true }) files) {
+        console.log('files >>> ', files)
+        return files
     }
 }
 
