@@ -137,7 +137,7 @@ export function FromRoute(name?: TParam, converter: Extract<ParameterConverterTy
 /**
  * 从body中读取
  * @param options 参数
- * @link https://github.com/koajs/bodyparser/tree/master#options
+ * @link https://github.com/koajs/koa-body?tab=readme-ov-file#options
  * @returns
  */
 export function FromBody(options?: BodyParserOptions): ParameterDecorator {
