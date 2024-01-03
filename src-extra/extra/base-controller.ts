@@ -1,5 +1,7 @@
 import { HttpError, getAuthorizations } from '@wangminghua/koa-restful'
 import { Context } from 'koa'
+import { ExtendedFormidableOptions, koaBody } from 'koa-body'
+import { createReadStream, statSync } from 'node:fs'
 /**
  * 基础控制器，提供一些比较常用的基础方法
  */
@@ -62,18 +64,31 @@ export abstract class BaseController {
         throw new HttpError(message, status)
     }
     /**
-     * 发送文件（暂未实现）
-     * @param file
+     * 发送文件
+     * @param filePath 文件路径
      */
-    async sendFile(file: string | File | Buffer) {
-        throw new Error('方法未实现')
+    async sendFile(filePath: string): Promise<void> {
+        const stats = await statSync(filePath)
+
+        // 设置响应头，指定文件名和类型
+        this.ctx.attachment(filePath)
+        this.ctx.set('Content-Length', `${stats.size}`)
+
+        // 通过流将文件发送给客户端
+        const stream = createReadStream(filePath)
+
+        this.ctx.body = stream // 设置响应主体为文件流
+        this.ctx.status = 200 // 设置状态码为 200 OK
     }
 
     /**
-     * 接收文件（暂未实现）
-     * @param file
+     * 接收文件
+     * @param formidable ExtendedFormidableOptions
      */
-    async receiveFile(): Promise<string | File | Buffer> {
-        throw new Error('方法未实现')
+    async receiveFile(formidable?: ExtendedFormidableOptions) {
+        const next = async () => {}
+        await koaBody({ multipart: true, formidable })(this.ctx, next)
+        await next()
+        return this.ctx.request.files
     }
 }
