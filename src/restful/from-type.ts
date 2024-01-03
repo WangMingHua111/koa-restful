@@ -1,5 +1,5 @@
-import { bodyParser } from '@koa/bodyparser'
 import { Context, Next } from 'koa'
+import { koaBody, type KoaBodyMiddlewareOptions } from 'koa-body'
 import { KEY_PARAMETER, ParameterConverter, ParameterConverterFn, ParameterConverterType, TParam, parseParameterName, parsePropertyKey } from '../utils/shared'
 import { BooleanArrayParameterConverter, BooleanParameterConverter, NumberArrayParameterConverter, NumberParameterConverter, StringArrayParameterConverter, StringParameterConverter } from './parameter-converter'
 
@@ -15,9 +15,9 @@ function readParams(params: any, p: TParam) {
 
 /**
  * bodyParser 参数
- * @link https://github.com/koajs/bodyparser/tree/master#options
+ * @link https://github.com/koajs/koa-body?tab=readme-ov-file#options
  */
-export type BodyParserOptions = Omit<Exclude<Parameters<typeof bodyParser>[0], undefined>, 'encoding'> & { encoding?: string }
+export type BodyParserOptions = Partial<KoaBodyMiddlewareOptions> //Omit<Exclude<Parameters<typeof koaBody>[0], undefined>, 'encoding'> & { encoding?: string }
 
 /**
  * 从查询参数中读取
@@ -137,7 +137,7 @@ export function FromRoute(name?: TParam, converter: Extract<ParameterConverterTy
 /**
  * 从body中读取
  * @param options 参数
- * @link https://github.com/koajs/bodyparser/tree/master#options
+ * @link https://github.com/koajs/koa-body?tab=readme-ov-file#options
  * @returns
  */
 export function FromBody(options?: BodyParserOptions): ParameterDecorator {
@@ -147,9 +147,10 @@ export function FromBody(options?: BodyParserOptions): ParameterDecorator {
         const metadata: Record<number, ParameterConverterFn> = Reflect.getMetadata(metakey, target.constructor) || {}
         metadata[parameterIndex] = async (ctx: Context) => {
             const next: Next = async () => {}
-            await bodyParser(options as any)(ctx, next)
+            await koaBody(options as any)(ctx, next)
             await next() // 等待body读取完毕
-            return ctx.request.body
+            const { files, body } = ctx.request
+            return files || body
         }
         Reflect.defineMetadata(metakey, metadata, target.constructor)
     }

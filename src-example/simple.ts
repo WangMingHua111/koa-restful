@@ -86,6 +86,13 @@ class OtherController {
     test3(): TestModel {
         return { name: 'n1', value: 'n2' }
     }
+
+    // 获取上传的文件，需设置其 multipart = true
+    @HttpPost()
+    testFile(@FromBody({ multipart: true }) files) {
+        console.log('files >>> ', files)
+        return files
+    }
 }
 
 // 创建 其他类型 请求控制器（仅支持类）, 路由参数、查询参数、请求头参数使用方法于GetController一致
