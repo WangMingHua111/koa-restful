@@ -25,5 +25,6 @@ coverage
 *.sln
 *.sw?
 
+images
 node_modules
 package-lock.json
