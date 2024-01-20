@@ -17,20 +17,6 @@
         "docs:build": "vitepress build docs",
         "docs:serve": "vitepress serve docs"
     },
-    "files": [
-        "src",
-        "src-example",
-        "src-extra",
-        "dist",
-        "dist-example",
-        "extra",
-        "package.json",
-        "tsconfig.json",
-        "tsconfig.dist.json",
-        "tsconfig.example.json",
-        "tsconfig.extra.json",
-        "README.md"
-    ],
     "author": "wangminghua",
     "license": "ISC",
     "dependencies": {
